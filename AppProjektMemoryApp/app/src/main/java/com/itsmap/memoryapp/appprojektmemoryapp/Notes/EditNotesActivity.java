@@ -33,12 +33,6 @@ ImageView NotePictureImageView;
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
         NoteDescriptionText.setText(noteData.getNoteDescription());
 
-        LocationEditText = findViewById(R.id.LocationEditText);
-        LocationEditText.setText(noteData.getLocation());
-
-        TimeStampEditText = findViewById(R.id.TimeStampEditText);
-        TimeStampEditText.setText(noteData.getTimeStamp());
-
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
         NotePictureImageView.setId(noteData.getPictureId());
 

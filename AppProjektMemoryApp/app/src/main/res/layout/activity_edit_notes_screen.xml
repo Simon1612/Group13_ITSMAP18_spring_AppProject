@@ -20,30 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/LocationEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="31dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/LocationDefaultText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editNoteHeadline" />
-
-    <EditText
-        android:id="@+id/TimeStampEditText"
-        android:layout_width="142dp"
-        android:layout_height="33dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/TimeStampDefaultText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LocationEditText" />
-
     <Button
         android:id="@+id/ChangePictureBtn"
         android:layout_width="wrap_content"
@@ -66,14 +42,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="textMultiLine"
         android:text="@string/NoteDescriptionDefaultText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TimeStampEditText" />
+        tools:layout_editor_absoluteY="152dp" />
 
     <Button
         android:id="@+id/CancelBtn"
@@ -82,14 +57,11 @@
         android:layout_marginBottom="56dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="@string/CancelBtnText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/OkBtn"
         app:layout_constraintHorizontal_bias="0.507"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TakePictureBtn"
-        app:layout_constraintVertical_bias="0.503" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/OkBtn"
@@ -97,8 +69,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="60dp"
         android:text="@string/OkBtnText"
-        app:layout_constraintBaseline_toBaselineOf="@+id/CancelBtn"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="554dp" />
 
     <ImageView
         android:id="@+id/NotePictureImageView"

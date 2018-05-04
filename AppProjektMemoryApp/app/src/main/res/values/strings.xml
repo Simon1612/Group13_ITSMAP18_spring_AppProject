@@ -39,5 +39,8 @@
     <string name="OkBtnText">OK</string>
     <string name="EditPictureBtnTxt">Change Picture</string>
     <string name="EditNoteHeadline">Edit Note</string>
+    <string name="CreateQuickNoteTxt">Enter Quicknote Here...</string>
+    <string name="RemindMeLaterCheckBoxTxt">Remind me later</string>
+    <string name="CreateQuicknoteButtonTxt">Create Quicknote</string>
 
 </resources>
