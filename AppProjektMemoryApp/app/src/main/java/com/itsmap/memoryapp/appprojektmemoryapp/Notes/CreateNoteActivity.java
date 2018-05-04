@@ -1,6 +1,7 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Notes;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.itsmap.memoryapp.appprojektmemoryapp.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
@@ -66,7 +68,7 @@ private FusedLocationProviderClient mFusedLocationClient;
                         });
             }
             else {
-            Toast.makeText(this, "You need to give permission in order for your location to be found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreateNoteActivity.this, "You need to give permission in order for your location to be found", Toast.LENGTH_SHORT).show();
             String[] permissionArray = {"android.permission.ACCESS_COARSE_LOCATION"};
             this.requestPermissions(permissionArray, PERMISSIONS_REQUEST);
         }
@@ -98,6 +100,10 @@ private FusedLocationProviderClient mFusedLocationClient;
                 noteData.setPictureId(NotePictureImageView.getId());
 
                 //Skal Desuden laves noget Database persistering
+
+                Intent mainActivityIntent = new Intent(CreateNoteActivity.this, MainActivity.class);
+                CreateNoteActivity.this.startActivity(mainActivityIntent);
+
             }
         });
 
