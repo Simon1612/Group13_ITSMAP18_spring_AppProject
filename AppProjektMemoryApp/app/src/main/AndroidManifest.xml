@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.itsmap.memoryapp.appprojektmemoryapp">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature android:name="android.hardware.location.network" />
 
     <application
@@ -13,6 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/googleMapsApiKey" />
+
         <activity android:name=".LogIn.SignUpScreen" />
         <activity android:name=".LogIn.ProfileScreen" />
         <activity android:name=".LogIn.ResetPasswordScreen" />
@@ -27,7 +35,7 @@
         <activity android:name=".Notes.EditNotesActivity" />
         <activity android:name=".MapActivity" />
         <activity android:name=".Notes.ViewNotesActivity" />
-        <activity android:name=".Notes.CreateNoteActivity"></activity>
+        <activity android:name=".Notes.CreateNoteActivity" />
     </application>
 
 </manifest>
