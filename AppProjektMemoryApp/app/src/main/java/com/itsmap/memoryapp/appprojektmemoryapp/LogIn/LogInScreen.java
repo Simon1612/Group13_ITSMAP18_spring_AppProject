@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.itsmap.memoryapp.appprojektmemoryapp.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 public class LogInScreen extends AppCompatActivity {
@@ -32,7 +33,7 @@ public class LogInScreen extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LogInScreen.this, ProfileScreen.class));
+            startActivity(new Intent(LogInScreen.this, MainActivity.class));
             finish();
         }
 
@@ -98,7 +99,7 @@ public class LogInScreen extends AppCompatActivity {
                                         Toast.makeText(LogInScreen.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    Intent intent = new Intent(LogInScreen.this, ProfileScreen.class);
+                                    Intent intent = new Intent(LogInScreen.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }

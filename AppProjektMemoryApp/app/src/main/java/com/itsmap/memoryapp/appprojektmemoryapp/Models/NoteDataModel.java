@@ -57,9 +57,6 @@ public class NoteDataModel {
     }
 
     public FirebaseUser Creator;
-    public void setCreator(FirebaseUser creator) {
-        Creator = creator; //Højst sandsynligt også unødvendigt, hvorfor skulle man ændre creator af en note?
-    }
 
     public FirebaseUser getCreator() {
         return Creator;
