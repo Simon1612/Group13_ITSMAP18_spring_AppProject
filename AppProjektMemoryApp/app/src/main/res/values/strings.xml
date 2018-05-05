@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">AppProjektMemoryApp</string>
-    <!-- Fra Firebase !-->
+
+    <!-- Fra Firebase -->
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
@@ -43,4 +44,5 @@
     <string name="RemindMeLaterCheckBoxTxt">Remind me later</string>
     <string name="CreateQuicknoteButtonTxt">Create Quicknote</string>
 
+    <string name="googleMapsApiKey">123432123</string>
 </resources>

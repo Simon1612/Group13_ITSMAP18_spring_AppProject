@@ -1,1 +1,5 @@
-#Tilføj idéer her!
+﻿#Tilføj idéer her!
+
+Har ikke kunnet få fat i en Api-key til google maps... Er ellers rimeligt nemt, men det virkede som om 
+siden ikke gad at loade, hver gang jeg prøvede...
+Link til google-maps-api: https://cloud.google.com/maps-platform/?__utma=102347093.503590042.1525508006.1525511200.1525511200.1&__utmb=102347093.0.10.1525511200&__utmc=102347093&__utmx=-&__utmz=102347093.1525511200.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)&__utmv=-&__utmk=121244808&_ga=2.9505009.510895369.1525508006-503590042.1525508006#get-started
