@@ -43,6 +43,11 @@
     <string name="CreateQuickNoteTxt">Enter Quicknote Here...</string>
     <string name="RemindMeLaterCheckBoxTxt">Remind me later</string>
     <string name="CreateQuicknoteButtonTxt">Create Quicknote</string>
+    <string name="currentLocationReady">CURRENT_LOCATION_READY</string>
+    <string name="notificationTitle">Memory Service</string>
+    <string name="notificationText">Friendly reminder that you have daily notes.</string>
+    <string name="firstNoteName">First Note</string>
+    <string name="firstNoteDescription">Your very first note!</string>
 
     <string name="googleMapsApiKey">123432123</string>
 </resources>

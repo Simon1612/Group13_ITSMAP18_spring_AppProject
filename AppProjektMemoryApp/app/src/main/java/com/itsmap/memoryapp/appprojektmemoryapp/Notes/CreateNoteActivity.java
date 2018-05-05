@@ -50,8 +50,6 @@ private FusedLocationProviderClient mFusedLocationClient;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_note);
 
-        noteData = new NoteDataModel("", "");
-
         LocationTextView = findViewById(R.id.LocationTextView); //Ved ikke hvordan man får placering, men den skal sættes til brugerens nuværende
 
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -94,10 +92,7 @@ private FusedLocationProviderClient mFusedLocationClient;
         OkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                noteData.setLocation(LocationTextView.getText().toString()); //ikke rigtigt
-                noteData.setTimeStamp(TimeStampTextView.getText().toString());
                 noteData.setNoteDescription(NoteDescriptionText.getText().toString());
-                noteData.setPictureId(NotePictureImageView.getId());
 
                 //Skal Desuden laves noget Database persistering
 

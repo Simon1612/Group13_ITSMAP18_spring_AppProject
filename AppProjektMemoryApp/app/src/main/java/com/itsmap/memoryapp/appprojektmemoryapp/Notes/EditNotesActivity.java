@@ -28,13 +28,11 @@ ImageView NotePictureImageView;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_notes_screen);
 
-        noteData = new NoteDataModel("Model To Edit", ""); //Skal sættes til den note der ønskes redigeret
-
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
         NoteDescriptionText.setText(noteData.getNoteDescription());
 
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
-        NotePictureImageView.setId(noteData.getPictureId());
+        //NotePictureImageView.setId(noteData.getPictureId());
 
         editPictureBtn = findViewById(R.id.ChangePictureBtn);
         editPictureBtn.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +60,7 @@ ImageView NotePictureImageView;
 
                 String location = LocationEditText.getText().toString();
                 if(location != "") {
-                    noteData.setLocation(location);
+                   // noteData.setLocation(location);
                 } else {
                     Toast.makeText(EditNotesActivity.this, "You need to set the Location", Toast.LENGTH_SHORT).show();
                 }
@@ -71,7 +69,7 @@ ImageView NotePictureImageView;
                 noteData.setNoteDescription(noteDescription);
 
                 int pictureId = NotePictureImageView.getId();
-                noteData.setPictureId(pictureId);
+               // noteData.setPictureId(pictureId);
 
                 //Skal laves noget Db-operation til at gemme noteModellen ned
 
