@@ -8,13 +8,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,9 +29,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
+import com.itsmap.memoryapp.appprojektmemoryapp.Notes.CreateNoteActivity;
 
 import java.text.DateFormat;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -41,11 +46,14 @@ public class MemoryAppService extends Service {
     FirebaseFirestore database;
     DocumentReference userRef;
 
+    private FusedLocationProviderClient mFusedLocationClient;
+    private String currentLocation;
+
     String currentLocationReady;
     int ONGOING_NOTIFICATION_ID = 1337;
 
     public class LocalBinder extends Binder {
-        MemoryAppService getService() {
+        public MemoryAppService getService() {
             return MemoryAppService.this;
         }
     }
@@ -133,6 +141,27 @@ public class MemoryAppService extends Service {
                 .toObjects(NoteDataModel.class);
     }
 
+    public String getLocation() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        int hasPermission = this.checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION");
+        if(hasPermission == 0) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                currentLocation = location.toString();
+                            }
+                        }
+                    });
+        }
+        else {
+            currentLocation = "Permission Error";
+            Toast.makeText(this, "You need to allow location-services", Toast.LENGTH_SHORT).show();
+        }
+        return currentLocation;
+    }
+
     //Inspiration from: https://developer.android.com/guide/components/broadcasts.html
     private BroadcastReceiver br = new BroadcastReceiver(){ //MÅSKE IKKE NØDVENDIG
         @Override
@@ -146,4 +175,5 @@ public class MemoryAppService extends Service {
             }
         }
     };
+
 }
