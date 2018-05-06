@@ -1,8 +1,14 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -15,12 +21,16 @@ import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 import java.io.Serializable;
 
+import static com.itsmap.memoryapp.appprojektmemoryapp.Notes.CreateNoteActivity.CAMERA_PERMISSIONS_REQUEST;
+
 public class EditNotesActivity extends AppCompatActivity {
 
 NoteDataModel noteData;
 Button editPictureBtn, OkBtn, CancelBtn;
 EditText NoteDescriptionText, LocationEditText, TimeStampEditText;
 ImageView NotePictureImageView;
+
+Boolean cameraPermissionGranted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +44,18 @@ ImageView NotePictureImageView;
         NoteDescriptionText.setText(noteData.getDescription());
 
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
-        //NotePictureImageView.setId(noteData.getPictureId());
 
         editPictureBtn = findViewById(R.id.ChangePictureBtn);
         editPictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(checkCallingOrSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSIONS_REQUEST);
+                } else {
+                    Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
+                }
+
                 //Billede skal kunne opdateres og vises på aktiviteten i ImageView'et
             }
         });
@@ -86,6 +102,29 @@ ImageView NotePictureImageView;
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case CAMERA_PERMISSIONS_REQUEST: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    cameraPermissionGranted = true;
+                    Intent pictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
+                } else {
+                    cameraPermissionGranted = false;
+                }
+                break;
+            }
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAMERA_PERMISSIONS_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            NotePictureImageView.setImageBitmap(photo);
+        }
     }
 
     @Override
