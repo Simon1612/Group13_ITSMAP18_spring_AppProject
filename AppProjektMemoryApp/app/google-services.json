@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "768181919023-8j2s2hc7oh2cpfdh860gjetujf4fna86.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.itsmap.memoryapp.appprojektmemoryapp",
+            "certificate_hash": "1b470f2dc36337ba4cf096a113a36043f5f20e40"
+          }
+        },
+        {
           "client_id": "768181919023-spqkvb4u16dnrft1l3b0rbcrh3oq3ua5.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768181919023-spqkvb4u16dnrft1l3b0rbcrh3oq3ua5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

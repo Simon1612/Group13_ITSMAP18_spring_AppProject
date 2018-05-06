@@ -48,6 +48,7 @@
     <string name="notificationText">Friendly reminder that you have daily notes.</string>
     <string name="firstNoteName">First Note</string>
     <string name="firstNoteDescription">Your very first note!</string>
+    <string name="firstNoteLocation">"Heaven!"</string>
 
     <string name="NavigationHeaderTitle">"TITLE + ICON?"</string>
     <string name="DrawerItemSettings">Settings</string>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="65dp">
+
+    <TextView
+        android:id="@+id/noteDateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_toStartOf="@+id/noteNameText"
+        android:textAlignment="viewEnd"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+
+    <TextView
+        android:id="@+id/noteNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="13dp"
+        android:textAlignment="viewStart"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+    <TextView
+        android:id="@+id/noteLocationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/noteDateText"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="0dp"
+        android:textAlignment="viewEnd"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+</RelativeLayout>
