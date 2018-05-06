@@ -14,10 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
-
 import java.io.Serializable;
 
 import static com.itsmap.memoryapp.appprojektmemoryapp.Activities.CreateNoteActivity.CAMERA_PERMISSIONS_REQUEST;

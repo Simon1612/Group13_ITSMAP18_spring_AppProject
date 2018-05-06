@@ -11,8 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
-
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MapActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.ViewNotesActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.LogIn.ProfileScreen;
@@ -71,10 +69,6 @@ public class BaseActivity extends AppCompatActivity {
                         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
                         startActivity(mapIntent);
                         break;
-
-                    default:
-                        drawerLayout.closeDrawers();
-
                 }
                 drawerLayout.closeDrawers();
                 return true;

@@ -1,8 +1,6 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 

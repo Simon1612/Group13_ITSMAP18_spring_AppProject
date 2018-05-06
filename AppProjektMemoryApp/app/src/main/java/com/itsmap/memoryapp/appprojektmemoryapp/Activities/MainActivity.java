@@ -6,29 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.location.LocationManager;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-
-import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
+import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
+import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
+import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.NotesListAdapter;
-import com.itsmap.memoryapp.appprojektmemoryapp.R;import com.itsmap.memoryapp.appprojektmemoryapp.Activities.ViewNotesActivity;
-import java.text.DateFormat;
+import com.itsmap.memoryapp.appprojektmemoryapp.R;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -6,14 +6,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
@@ -24,14 +21,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
-
 import java.io.Serializable;
 
 public class CreateNoteActivity extends AppCompatActivity {
