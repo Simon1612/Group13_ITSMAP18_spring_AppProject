@@ -41,7 +41,9 @@
         <service
             android:name=".MemoryAppService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>

@@ -4,8 +4,8 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.itsmap.memoryapp.appprojektmemoryapp"
-        minSdkVersion 27
-        targetSdkVersion 27
+        minSdkVersion 26
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,10 +38,8 @@ dependencies {
     compile 'com.google.firebase:firebase-firestore:15.0.0'
     implementation 'com.google.android.gms:play-services-gcm:15.0.0'
     implementation 'com.google.android.gms:play-services-location:15.0.0'
-	implementation 'com.google.android.gms:play-services-maps:15.0.0'
-	implementation 'com.android.support:design:27.1.1'
+    implementation 'com.google.android.gms:play-services-maps:15.0.0'
+    implementation 'com.android.support:design:27.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-

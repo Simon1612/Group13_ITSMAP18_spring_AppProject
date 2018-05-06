@@ -49,5 +49,12 @@
     <string name="firstNoteName">First Note</string>
     <string name="firstNoteDescription">Your very first note!</string>
 
-    <string name="googleMapsApiKey">123432123</string>
+    <string name="NavigationHeaderTitle">"TITLE + ICON?"</string>
+    <string name="DrawerItemSettings">Settings</string>
+    <string name="DrawerItemNotes">My Notes</string>
+    <string name="DrawerItemProfile">My profile</string>
+    <string name="DrawerItemMap">Map stuff</string>
+
+
+    <string name="googleMapsApiKey">AIzaSyCWkDTUPbsjbFlETjI8kBpbjOyhNbRjDq0</string>
 </resources>

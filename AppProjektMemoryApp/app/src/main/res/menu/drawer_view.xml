@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/NotesItem"
+            android:title="@string/DrawerItemNotes" />
+        <item
+            android:id="@+id/ProfileItem"
+            android:title="@string/DrawerItemProfile" />
+        <item
+            android:id="@+id/SettingsItem"
+            android:title="@string/DrawerItemSettings" />
+        <item
+            android:id="@+id/MapItem"
+            android:title="@string/DrawerItemMap" />
+
+    </group>
+</menu>
