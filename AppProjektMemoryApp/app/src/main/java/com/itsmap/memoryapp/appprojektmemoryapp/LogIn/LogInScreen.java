@@ -15,7 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.itsmap.memoryapp.appprojektmemoryapp.MainActivity;
+import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 public class LogInScreen extends AppCompatActivity {

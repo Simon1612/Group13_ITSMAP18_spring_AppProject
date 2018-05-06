@@ -45,7 +45,7 @@ public class MemoryAppService extends Service {
     int ONGOING_NOTIFICATION_ID = 1337;
 
     public class LocalBinder extends Binder {
-        MemoryAppService getService() {
+        public MemoryAppService getService() {
             return MemoryAppService.this;
         }
     }
@@ -87,7 +87,7 @@ public class MemoryAppService extends Service {
                         colRef.document(currentUser.getEmail())
                                 .collection("Notes")
                                 .document(getResources().getString(R.string.firstNoteName))
-                                .set(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription)));
+                                .set(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription),getResources().getString(R.string.firstNoteDescription) ));
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -122,6 +122,10 @@ public class MemoryAppService extends Service {
         userRef.collection("Notes")
                 .document(note.getName())
                 .set(note);
+    }
+
+    public String getCurrentLocation(){
+        return "21, 2";
     }
 
     public List<NoteDataModel> getLastFourNotes() {

@@ -32,11 +32,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".Notes.EditNotesActivity" />
-        <activity android:name=".MapActivity" />
-        <activity android:name=".Notes.ViewNotesActivity" />
-        <activity android:name=".Notes.CreateNoteActivity" />
+        <activity android:name=".Activities.MainActivity" />
+        <activity android:name=".Activities.EditNotesActivity" />
+        <activity android:name=".Activities.MapActivity" />
+        <activity android:name=".Activities.ViewNotesActivity" />
+        <activity android:name=".Activities.CreateNoteActivity" />
 
         <service
             android:name=".MemoryAppService"
