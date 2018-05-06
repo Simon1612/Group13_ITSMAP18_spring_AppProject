@@ -29,9 +29,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
-import com.itsmap.memoryapp.appprojektmemoryapp.Notes.CreateNoteActivity;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -41,15 +41,15 @@ public class MemoryAppService extends Service {
     NotificationCompat.Builder notification;
     NotificationManager nManager;
     NotificationChannel nChannel;
-    Intent notificationIntent;
+    Intent notificationIntent, notesReadyIntent;
     FirebaseUser currentUser;
     FirebaseFirestore database;
     DocumentReference userRef;
+    List<NoteDataModel> lastFourNotes;
 
-    private FusedLocationProviderClient mFusedLocationClient;
-    private String currentLocation;
+    String currentLocationReady; 	private FusedLocationProviderClient mFusedLocationClient;
+    String currentLocation, notesReady;
 
-    String currentLocationReady;
     int ONGOING_NOTIFICATION_ID = 1337;
 
     public class LocalBinder extends Binder {
@@ -64,7 +64,9 @@ public class MemoryAppService extends Service {
     @Override
     public void onCreate() {
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
+        notesReady = "NOTES_READY";
         nManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        lastFourNotes = new ArrayList<NoteDataModel>();
 
         //Set broadcast receiver
         IntentFilter filter = new IntentFilter();
@@ -95,7 +97,7 @@ public class MemoryAppService extends Service {
                         colRef.document(currentUser.getEmail())
                                 .collection("Notes")
                                 .document(getResources().getString(R.string.firstNoteName))
-                                .set(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription)));
+                                .set(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription),getResources().getString(R.string.firstNoteDescription) ));
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -123,6 +125,12 @@ public class MemoryAppService extends Service {
         //Start service as foreground
         startForeground(ONGOING_NOTIFICATION_ID, notification.build());
 
+        notesReadyIntent = new Intent();
+        notesReadyIntent.setAction(notesReady);
+
+        updateLastFourNotes();
+        sendBroadcast(notesReadyIntent);
+
         return Service.START_NOT_STICKY;
     }
 
@@ -132,13 +140,29 @@ public class MemoryAppService extends Service {
                 .set(note);
     }
 
+    public String getCurrentLocation(){
+        return "21, 2"; //GET DAT LOCATION PLS
+    }
+
     public List<NoteDataModel> getLastFourNotes() {
-        return userRef.collection("Notes")
+        return lastFourNotes;
+    }
+
+    public void updateLastFourNotes() {
+        Task t = userRef.collection("Notes")
                 .orderBy("timeStamp", Query.Direction.DESCENDING)
                 .limit(4)
-                .get()
-                .getResult()
-                .toObjects(NoteDataModel.class);
+                .get();
+
+        synchronized (t){
+            if(t.isSuccessful())
+            {
+                lastFourNotes.addAll((List<NoteDataModel>) t.getResult());
+                sendBroadcast(notesReadyIntent);
+            } else {
+                Log.d(TAG, "get failed with ", t.getException());
+            }
+        }
     }
 
     public String getLocation() {
