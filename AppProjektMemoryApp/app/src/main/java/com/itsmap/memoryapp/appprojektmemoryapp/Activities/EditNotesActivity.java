@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +20,7 @@ import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 import java.io.Serializable;
 
-import static com.itsmap.memoryapp.appprojektmemoryapp.Notes.CreateNoteActivity.CAMERA_PERMISSIONS_REQUEST;
+import static com.itsmap.memoryapp.appprojektmemoryapp.Activities.CreateNoteActivity.CAMERA_PERMISSIONS_REQUEST;
 
 public class EditNotesActivity extends AppCompatActivity {
 

@@ -29,7 +29,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
-import com.itsmap.memoryapp.appprojektmemoryapp.Notes.CreateNoteActivity;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ public class MemoryAppService extends Service {
     String currentLocationReady; 	private FusedLocationProviderClient mFusedLocationClient;
     String currentLocation, notesReady;
 
-    String currentLocationReady;
     int ONGOING_NOTIFICATION_ID = 1337;
 
     public class LocalBinder extends Binder {
