@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     recentNotesList.add(new NoteDataModel(
                             "Quicknote: " + textSnip,
                             quicknoteText,
-                            "21, 3"));
+                            service.getCurrentLocation()));
 
                     notesListAdapter.notifyDataSetChanged();
                     quicknoteEdit.getText().clear();
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                     recentNotesList.add(new NoteDataModel(
                             "Quicknote: " + textSnip,
                             quicknoteText,
-                            "21, 2"));
+                            service.getCurrentLocation()));
 
                     notesListAdapter.notifyDataSetChanged();
                     quicknoteEdit.getText().clear();
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver br = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
-            //throw new Exception();
+            recentNotesList.addAll(service.getLastFourNotes());
         }
     };
 
