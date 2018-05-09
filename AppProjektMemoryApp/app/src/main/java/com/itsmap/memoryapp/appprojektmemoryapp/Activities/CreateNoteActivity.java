@@ -13,19 +13,28 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateNoteActivity extends AppCompatActivity {
 
@@ -39,6 +48,8 @@ MemoryAppService.LocalBinder binder;
 Intent bindingIntent;
 MemoryAppService memoryAppService;
 Boolean mBound = false;
+
+FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
 
 ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
     @Override
@@ -97,14 +108,33 @@ NoteDataModel noteData;
             }
         });
 
+        //Baseret på FirebaseFirestore dokumentation
         OkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 noteData.setDescription(NoteDescriptionText.getText().toString());
+                Map<String, Object> note = new HashMap<String, Object>();
+                note.put("Id", 1); //Virker self kun for den første note, der skal autogeneres ID til noterne.
+                note.put("Name", noteData.getName());
+                note.put("Timestamp", noteData.getTimeStamp());
+                note.put("Description", noteData.getDescription());
+                note.put("Location", noteData.getLocation());
+                note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
 
-                FirebaseFirestore.getInstance().collection("Notes")
-                        .add(noteData);
-                //Skal Desuden laves noget Database persistering
+                firebaseDb.collection("Notes")
+                        .add(note)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("DbUpdate", "New Note Added to Db");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("DbUpdate", "Error in adding new note to Db");
+                    }
+                });
+
                 Intent mainActivityIntent = new Intent(CreateNoteActivity.this, MainActivity.class);
                 CreateNoteActivity.this.startActivity(mainActivityIntent);
 

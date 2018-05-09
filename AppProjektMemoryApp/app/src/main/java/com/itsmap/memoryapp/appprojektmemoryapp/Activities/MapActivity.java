@@ -1,13 +1,22 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 //Inspireret af https://developers.google.com/maps/documentation/android-sdk/map-with-marker
@@ -15,6 +24,7 @@ import com.itsmap.memoryapp.appprojektmemoryapp.R;
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
+    FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -37,12 +47,30 @@ public class MapActivity extends AppCompatActivity
          * installed Google Play services and returned to the app.
          */
         @Override
-        public void onMapReady(GoogleMap googleMap) {
+        public void onMapReady(final GoogleMap googleMap) {
             // Add a marker in Sydney, Australia,
             // and move the map's camera to the same location.
             LatLng aarhus = new LatLng(56.162939, 10.203921);
             googleMap.addMarker(new MarkerOptions().position(aarhus)
                     .title("Marker in Aarhus"));
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(aarhus));
+            firebaseDb.collection("Notes").whereEqualTo("Creator", FirebaseAuth.getInstance().getCurrentUser())
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()) {
+                        for (DocumentSnapshot doc : task.getResult()){
+                            //Skal ændres hvordan vi gemmer location, skal nok gemmes som Lat / Lng double-values
+                            String Location = doc.getData().get("Location").toString();
+                            String Name = doc.getData().get("Name").toString();
+                            LatLng noteLocation = new LatLng(Double.valueOf(Location), Double.valueOf(Location));
+                            googleMap.addMarker(new MarkerOptions().position(noteLocation).title(Name));
+                        }
+                    }
+                    else {
+                        Log.w("DbRead", "Error reading notes from db");
+                    }
+                }
+            });
         }
 }

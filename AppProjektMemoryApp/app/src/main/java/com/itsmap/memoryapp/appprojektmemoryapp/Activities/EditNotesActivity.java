@@ -8,15 +8,25 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.itsmap.memoryapp.appprojektmemoryapp.Activities.CreateNoteActivity.CAMERA_PERMISSIONS_REQUEST;
 
@@ -28,6 +38,8 @@ EditText NoteDescriptionText, LocationEditText, TimeStampEditText;
 ImageView NotePictureImageView;
 
 Boolean cameraPermissionGranted;
+
+FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +64,6 @@ Boolean cameraPermissionGranted;
                     Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
                 }
-
-                //Billede skal kunne opdateres og vises på aktiviteten i ImageView'et
             }
         });
 
@@ -75,7 +85,7 @@ Boolean cameraPermissionGranted;
 
                 String location = LocationEditText.getText().toString();
                 if(location != "") {
-                   // noteData.setLocation(location);
+                    noteData.setLocation(location);
                 } else {
                     Toast.makeText(EditNotesActivity.this, "You need to set the Location", Toast.LENGTH_SHORT).show();
                 }
@@ -86,7 +96,27 @@ Boolean cameraPermissionGranted;
                 int pictureId = NotePictureImageView.getId();
                // noteData.setPictureId(pictureId);
 
-                //Skal laves noget Db-operation til at gemme noteModellen ned
+                Map<String, Object> note = new HashMap<String, Object>();
+                note.put("Id", 123123); //Skal sættes til det samme som den Note der ønskes Redigeret
+                note.put("Name", noteData.getName());
+                note.put("Timestamp", noteData.getTimeStamp());
+                note.put("Description", noteData.getDescription());
+                note.put("Location", noteData.getLocation());
+                note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
+
+                firebaseDb.collection("Notes")
+                        .add(note)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("DbUpdate", "New Note Added to Db");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("DbUpdate", "Error in adding new note to Db");
+                    }
+                });
 
                 Intent mainActivityIntent = new Intent(EditNotesActivity.this, MainActivity.class);
                 EditNotesActivity.this.startActivity(mainActivityIntent);
