@@ -49,7 +49,7 @@ public class NotesListAdapter extends ArrayAdapter<NoteDataModel> implements Ada
 
         noteNameView.setText(currentNoteDataModel.getName());
         noteDateView.setText(currentNoteDataModel.getTimeStamp());
-        noteLocationView.setText(currentNoteDataModel.getLocation());
+        noteLocationView.setText("Latitude: " + currentNoteDataModel.getLocation().getLatitude() + " Longtitude: " + currentNoteDataModel.getLocation().getLongitude());
 
         return view;
     }

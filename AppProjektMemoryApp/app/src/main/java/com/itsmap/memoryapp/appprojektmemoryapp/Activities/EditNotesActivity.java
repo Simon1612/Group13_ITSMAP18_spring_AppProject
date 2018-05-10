@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,7 +87,13 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
 
                 String location = LocationEditText.getText().toString();
                 if(location != "") {
-                    noteData.setLocation(location);
+                    Double latitude = Double.valueOf(location.substring(location.lastIndexOf("Latitude: ") ,location.indexOf("Longtitude")));
+                    Double longtitude = Double.valueOf(location.substring(location.lastIndexOf("Longtitude: ")));
+                    Location editTextLocation = new Location("");
+                    editTextLocation.setLatitude(latitude);
+                    editTextLocation.setLongitude(longtitude);
+                    noteData.setLocation(editTextLocation);
+
                 } else {
                     Toast.makeText(EditNotesActivity.this, "You need to set the Location", Toast.LENGTH_SHORT).show();
                 }
@@ -101,7 +109,8 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
                 note.put("Name", noteData.getName());
                 note.put("Timestamp", noteData.getTimeStamp());
                 note.put("Description", noteData.getDescription());
-                note.put("Location", noteData.getLocation());
+                note.put("Latitude", noteData.getLocation().getLatitude());
+                note.put("Longtitude", noteData.getLocation().getLongitude());
                 note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
 
                 firebaseDb.collection("Notes")
@@ -157,7 +166,7 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("noteDataModel", (Serializable) noteData);
+        outState.putSerializable("noteDataModel", noteData);
     }
 
     @Override

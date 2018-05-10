@@ -60,10 +60,11 @@ public class MapActivity extends AppCompatActivity
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()) {
                         for (DocumentSnapshot doc : task.getResult()){
-                            //Skal ændres hvordan vi gemmer location, skal nok gemmes som Lat / Lng double-values
-                            String Location = doc.getData().get("Location").toString();
+                            Double Latitude = Double.valueOf(doc.getData().get("Latitude").toString());
+                            Double Longtitude = Double.valueOf(doc.getData().get("Longtitude").toString());
                             String Name = doc.getData().get("Name").toString();
-                            LatLng noteLocation = new LatLng(Double.valueOf(Location), Double.valueOf(Location));
+
+                            LatLng noteLocation = new LatLng(Latitude, Longtitude);
                             googleMap.addMarker(new MarkerOptions().position(noteLocation).title(Name));
                         }
                     }
@@ -72,5 +73,9 @@ public class MapActivity extends AppCompatActivity
                     }
                 }
             });
+
+            //TODO: Hvis vi ønsker at mappet skal starte met at zoome ind på brugerens nuværende lcoation, skal MapActivity have adgang til service'en.
+            //LatLng latestLocation = new LatLng(memoryAppService.getLocation().getLatitude(), memoryAppService.getLocation().getLongtitude());
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(latestLocation));
         }
 }

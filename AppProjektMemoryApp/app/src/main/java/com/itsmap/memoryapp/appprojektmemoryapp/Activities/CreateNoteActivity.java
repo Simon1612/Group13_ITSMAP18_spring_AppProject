@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -42,7 +43,7 @@ final static int LOCATION_PERMISSIONS_REQUEST = 123;
 final static int CAMERA_PERMISSIONS_REQUEST = 124;
 private Boolean locationPermissionGranted;
 private Boolean cameraPermissionGranted;
-private String location;
+private Location location;
 
 MemoryAppService.LocalBinder binder;
 Intent bindingIntent;
@@ -85,8 +86,8 @@ NoteDataModel noteData;
         startService(bindingIntent);
 
         LocationTextView = findViewById(R.id.LocationTextView);
-        if(location != "Permission Error") {
-            LocationTextView.setText(location);
+        if(location != null) {
+            LocationTextView.setText("Latitude: " + location.getLatitude() + " Longtitude: " + location.getLongitude());
         } else {
             this.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},LOCATION_PERMISSIONS_REQUEST);
         }
@@ -118,7 +119,8 @@ NoteDataModel noteData;
                 note.put("Name", noteData.getName());
                 note.put("Timestamp", noteData.getTimeStamp());
                 note.put("Description", noteData.getDescription());
-                note.put("Location", noteData.getLocation());
+                note.put("Latitude", noteData.getLocation().getLatitude());
+                note.put("Longtitude", noteData.getLocation().getLongitude());
                 note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
 
                 firebaseDb.collection("Notes")
@@ -150,7 +152,6 @@ NoteDataModel noteData;
                     Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
                 }
-                //Skal gøre det muligt at tage et billede, som efterfølgende vises på aktiviteten i ImageView'et
             }
         });
     }
@@ -209,8 +210,9 @@ NoteDataModel noteData;
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("binder", (Serializable) binder);
-        outState.putSerializable("noteDataModel", (Serializable) noteData);
-        outState.putString("location", location);
+        outState.putSerializable("noteDataModel", noteData);
+        outState.putDouble("location_Latitude", location.getLatitude());
+        outState.putDouble("location_Longtitude", location.getLongitude());
     }
 
     @Override
@@ -219,6 +221,7 @@ NoteDataModel noteData;
 
         binder = (MemoryAppService.LocalBinder) savedInstanceState.getSerializable("binder");
         noteData =(NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
-        location = savedInstanceState.getString("location");
+        location.setLatitude(savedInstanceState.getDouble("location_Latitude"));
+        location.setLongitude(savedInstanceState.getDouble("location_Longtitude"));
     }
 }
