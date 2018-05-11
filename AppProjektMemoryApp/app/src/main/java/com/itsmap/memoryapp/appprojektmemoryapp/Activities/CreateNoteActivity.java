@@ -8,24 +8,34 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateNoteActivity extends AppCompatActivity {
 
@@ -33,12 +43,14 @@ final static int LOCATION_PERMISSIONS_REQUEST = 123;
 final static int CAMERA_PERMISSIONS_REQUEST = 124;
 private Boolean locationPermissionGranted;
 private Boolean cameraPermissionGranted;
-private String location;
+private Location location;
 
 MemoryAppService.LocalBinder binder;
 Intent bindingIntent;
 MemoryAppService memoryAppService;
 Boolean mBound = false;
+
+FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
 
 ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
     @Override
@@ -74,8 +86,8 @@ NoteDataModel noteData;
         startService(bindingIntent);
 
         LocationTextView = findViewById(R.id.LocationTextView);
-        if(location != "Permission Error") {
-            LocationTextView.setText(location);
+        if(location != null) {
+            LocationTextView.setText("Latitude: " + location.getLatitude() + " Longtitude: " + location.getLongitude());
         } else {
             this.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},LOCATION_PERMISSIONS_REQUEST);
         }
@@ -97,14 +109,34 @@ NoteDataModel noteData;
             }
         });
 
+        //Baseret på FirebaseFirestore dokumentation
         OkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 noteData.setDescription(NoteDescriptionText.getText().toString());
+                Map<String, Object> note = new HashMap<String, Object>();
+                note.put("Id", 1); //Virker self kun for den første note, der skal autogeneres ID til noterne.
+                note.put("Name", noteData.getName());
+                note.put("Timestamp", noteData.getTimeStamp());
+                note.put("Description", noteData.getDescription());
+                note.put("Latitude", noteData.getLocation().getLatitude());
+                note.put("Longtitude", noteData.getLocation().getLongitude());
+                note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
 
-                FirebaseFirestore.getInstance().collection("Notes")
-                        .add(noteData);
-                //Skal Desuden laves noget Database persistering
+                firebaseDb.collection("Notes")
+                        .add(note)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("DbUpdate", "New Note Added to Db");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("DbUpdate", "Error in adding new note to Db");
+                    }
+                });
+
                 Intent mainActivityIntent = new Intent(CreateNoteActivity.this, MainActivity.class);
                 CreateNoteActivity.this.startActivity(mainActivityIntent);
 
@@ -120,7 +152,6 @@ NoteDataModel noteData;
                     Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
                 }
-                //Skal gøre det muligt at tage et billede, som efterfølgende vises på aktiviteten i ImageView'et
             }
         });
     }
@@ -179,8 +210,9 @@ NoteDataModel noteData;
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("binder", (Serializable) binder);
-        outState.putSerializable("noteDataModel", (Serializable) noteData);
-        outState.putString("location", location);
+        outState.putSerializable("noteDataModel", noteData);
+        outState.putDouble("location_Latitude", location.getLatitude());
+        outState.putDouble("location_Longtitude", location.getLongitude());
     }
 
     @Override
@@ -189,6 +221,7 @@ NoteDataModel noteData;
 
         binder = (MemoryAppService.LocalBinder) savedInstanceState.getSerializable("binder");
         noteData =(NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
-        location = savedInstanceState.getString("location");
+        location.setLatitude(savedInstanceState.getDouble("location_Latitude"));
+        location.setLongitude(savedInstanceState.getDouble("location_Longtitude"));
     }
 }

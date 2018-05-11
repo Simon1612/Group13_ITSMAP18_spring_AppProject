@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.location.Location;
 import android.os.IBinder;
 import android.os.Bundle;
 import android.view.View;
@@ -33,6 +34,7 @@ public class MainActivity extends BaseActivity {
     Intent serviceIntent;
     String currentLocationReady, textSnip, quicknoteText;
     NotesListAdapter notesListAdapter;
+    Location location;
     boolean amIBound = false;
 
     @Override
@@ -60,6 +62,8 @@ public class MainActivity extends BaseActivity {
         homescreenNotesListView.setAdapter(notesListAdapter);
         homescreenNotesListView.setOnItemClickListener(notesListAdapter);
 
+        location = service.getLocation();
+
         createQuicknoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +79,7 @@ public class MainActivity extends BaseActivity {
                     recentNotesList.add(new NoteDataModel(
                             "Quicknote: " + textSnip,
                             quicknoteText,
-                            service.getCurrentLocation()));
+                            location.getLatitude(), location.getLongitude()));
 
                     notesListAdapter.notifyDataSetChanged();
                     quicknoteEdit.getText().clear();
@@ -84,7 +88,7 @@ public class MainActivity extends BaseActivity {
                     recentNotesList.add(new NoteDataModel(
                             "Quicknote: " + textSnip,
                             quicknoteText,
-                            service.getCurrentLocation()));
+                            location.getLatitude(), location.getLongitude()));
 
                     notesListAdapter.notifyDataSetChanged();
                     quicknoteEdit.getText().clear();

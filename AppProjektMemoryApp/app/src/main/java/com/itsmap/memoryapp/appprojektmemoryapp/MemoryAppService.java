@@ -47,8 +47,10 @@ public class MemoryAppService extends Service {
     DocumentReference userRef;
     List<NoteDataModel> lastFourNotes;
 
-    String currentLocationReady; 	private FusedLocationProviderClient mFusedLocationClient;
-    String currentLocation, notesReady;
+    String currentLocationReady;
+    private FusedLocationProviderClient mFusedLocationClient;
+    String notesReady;
+    Location currentLocation;
 
     int ONGOING_NOTIFICATION_ID = 1337;
 
@@ -97,7 +99,7 @@ public class MemoryAppService extends Service {
                         colRef.document(currentUser.getEmail())
                                 .collection("Notes")
                                 .document(getResources().getString(R.string.firstNoteName))
-                                .set(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription),getResources().getString(R.string.firstNoteDescription) ));
+                                .set(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0));
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -165,7 +167,7 @@ public class MemoryAppService extends Service {
         }
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         int hasPermission = this.checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION");
         if(hasPermission == 0) {
@@ -174,13 +176,13 @@ public class MemoryAppService extends Service {
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null) {
-                                currentLocation = location.toString();
+                                currentLocation = location;
                             }
                         }
                     });
         }
         else {
-            currentLocation = "Permission Error";
+            currentLocation = null;
             Toast.makeText(this, "You need to allow location-services", Toast.LENGTH_SHORT).show();
         }
         return currentLocation;
