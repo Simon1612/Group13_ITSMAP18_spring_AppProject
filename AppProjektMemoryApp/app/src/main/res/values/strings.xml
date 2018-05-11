@@ -55,6 +55,7 @@
     <string name="DrawerItemNotes">My Notes</string>
     <string name="DrawerItemProfile">My profile</string>
     <string name="DrawerItemMap">Map stuff</string>
+    <string name="NoteCreationFailed">Failed to create note.</string>
 
 
     <string name="googleMapsApiKey">AIzaSyCWkDTUPbsjbFlETjI8kBpbjOyhNbRjDq0</string>

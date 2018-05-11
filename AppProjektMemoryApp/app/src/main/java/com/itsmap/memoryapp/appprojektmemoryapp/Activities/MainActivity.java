@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
@@ -34,7 +37,7 @@ public class MainActivity extends BaseActivity {
     Intent serviceIntent;
     String currentLocationReady, textSnip, quicknoteText;
     NotesListAdapter notesListAdapter;
-    Location location;
+    LatLng location;
     boolean amIBound = false;
 
     @Override
@@ -62,7 +65,7 @@ public class MainActivity extends BaseActivity {
         homescreenNotesListView.setAdapter(notesListAdapter);
         homescreenNotesListView.setOnItemClickListener(notesListAdapter);
 
-        location = service.getLocation();
+
 
         createQuicknoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,19 +79,31 @@ public class MainActivity extends BaseActivity {
 
                 if(recentNotesList.size() >= 4){
                     recentNotesList.remove(0);
-                    recentNotesList.add(new NoteDataModel(
-                            "Quicknote: " + textSnip,
-                            quicknoteText,
-                            location.getLatitude(), location.getLongitude()));
+                    try{
+                        recentNotesList.add(new NoteDataModel(
+                                "Quicknote: " + textSnip,
+                                quicknoteText,
+                                location.latitude, location.longitude));
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this,  getResources().getString(R.string.NoteCreationFailed), Toast.LENGTH_SHORT).show();
+                    }
 
                     notesListAdapter.notifyDataSetChanged();
                     quicknoteEdit.getText().clear();
                 }
                 else{
-                    recentNotesList.add(new NoteDataModel(
-                            "Quicknote: " + textSnip,
-                            quicknoteText,
-                            location.getLatitude(), location.getLongitude()));
+                    try{
+                        recentNotesList.add(new NoteDataModel(
+                                "Quicknote: " + textSnip,
+                                quicknoteText,
+                                location.latitude, location.longitude));
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.NoteCreationFailed) , Toast.LENGTH_SHORT).show();
+                     }
 
                     notesListAdapter.notifyDataSetChanged();
                     quicknoteEdit.getText().clear();
@@ -119,7 +134,13 @@ public class MainActivity extends BaseActivity {
     private BroadcastReceiver br = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
-            recentNotesList.addAll(service.getLastFourNotes());
+            //recentNotesList.addAll(service.getLastFourNotes());
+            try{
+                location = service.getCurrentLocation();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
         }
     };
 

@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,41 +40,23 @@ import java.util.Map;
 
 public class CreateNoteActivity extends AppCompatActivity {
 
-final static int LOCATION_PERMISSIONS_REQUEST = 123;
-final static int CAMERA_PERMISSIONS_REQUEST = 124;
-private Boolean locationPermissionGranted;
-private Boolean cameraPermissionGranted;
-private Location location;
+    final static int LOCATION_PERMISSIONS_REQUEST = 123;
+    final static int CAMERA_PERMISSIONS_REQUEST = 124;
+    private Boolean locationPermissionGranted;
+    private Boolean cameraPermissionGranted;
+    private LatLng location;
 
-MemoryAppService.LocalBinder binder;
-Intent bindingIntent;
-MemoryAppService memoryAppService;
-Boolean mBound = false;
+    MemoryAppService.LocalBinder binder;
+    Intent bindingIntent;
+    MemoryAppService memoryAppService;
+    Button OkBtn, CancelBtn, TakePictureBtn;
+    TextView LocationTextView, TimeStampTextView;
+    EditText NoteDescriptionText;
+    ImageView NotePictureImageView;
+    NoteDataModel noteData;
 
-FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
-
-ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        binder = (MemoryAppService.LocalBinder) service;
-        memoryAppService =  binder.getService();
-        mBound = true;
-
-        location = memoryAppService.getLocation();
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        mBound = false;
-    }
-};
-
-Button OkBtn, CancelBtn, TakePictureBtn;
-TextView LocationTextView, TimeStampTextView;
-EditText NoteDescriptionText;
-ImageView NotePictureImageView;
-
-NoteDataModel noteData;
+    FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
+    Boolean mBound = false;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -87,7 +70,7 @@ NoteDataModel noteData;
 
         LocationTextView = findViewById(R.id.LocationTextView);
         if(location != null) {
-            LocationTextView.setText("Latitude: " + location.getLatitude() + " Longtitude: " + location.getLongitude());
+            LocationTextView.setText("Latitude: " + location.latitude + " Longtitude: " + location.longitude);
         } else {
             this.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},LOCATION_PERMISSIONS_REQUEST);
         }
@@ -119,8 +102,8 @@ NoteDataModel noteData;
                 note.put("Name", noteData.getName());
                 note.put("Timestamp", noteData.getTimeStamp());
                 note.put("Description", noteData.getDescription());
-                note.put("Latitude", noteData.getLocation().getLatitude());
-                note.put("Longtitude", noteData.getLocation().getLongitude());
+                note.put("Latitude", noteData.getLocation().latitude);
+                note.put("Longtitude", noteData.getLocation().longitude);
                 note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
 
                 firebaseDb.collection("Notes")
@@ -155,6 +138,27 @@ NoteDataModel noteData;
             }
         });
     }
+
+    ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            binder = (MemoryAppService.LocalBinder) service;
+            memoryAppService =  binder.getService();
+            mBound = true;
+
+            try{
+                location = memoryAppService.getCurrentLocation();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
 
     @Override
     protected void onDestroy() {
@@ -211,8 +215,8 @@ NoteDataModel noteData;
         super.onSaveInstanceState(outState);
         outState.putSerializable("binder", (Serializable) binder);
         outState.putSerializable("noteDataModel", noteData);
-        outState.putDouble("location_Latitude", location.getLatitude());
-        outState.putDouble("location_Longtitude", location.getLongitude());
+        outState.putDouble("location_Latitude", location.latitude);
+        outState.putDouble("location_Longtitude", location.longitude);
     }
 
     @Override
@@ -221,7 +225,6 @@ NoteDataModel noteData;
 
         binder = (MemoryAppService.LocalBinder) savedInstanceState.getSerializable("binder");
         noteData =(NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
-        location.setLatitude(savedInstanceState.getDouble("location_Latitude"));
-        location.setLongitude(savedInstanceState.getDouble("location_Longtitude"));
+        noteData.setLocation(new LatLng(savedInstanceState.getDouble("location_Latitude"), savedInstanceState.getDouble("location_Longtitude")));
     }
 }

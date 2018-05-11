@@ -36,7 +36,7 @@ public class EditNotesActivity extends AppCompatActivity {
 
 NoteDataModel noteData;
 Button editPictureBtn, OkBtn, CancelBtn;
-EditText NoteDescriptionText, LocationEditText, TimeStampEditText;
+EditText NoteDescriptionText, TimeStampEditText;
 ImageView NotePictureImageView;
 
 Boolean cameraPermissionGranted;
@@ -85,19 +85,6 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
                     Toast.makeText(EditNotesActivity.this, "You need to set the Timestamp", Toast.LENGTH_SHORT).show();
                 }
 
-                String location = LocationEditText.getText().toString();
-                if(location != "") {
-                    Double latitude = Double.valueOf(location.substring(location.lastIndexOf("Latitude: ") ,location.indexOf("Longtitude")));
-                    Double longtitude = Double.valueOf(location.substring(location.lastIndexOf("Longtitude: ")));
-                    Location editTextLocation = new Location("");
-                    editTextLocation.setLatitude(latitude);
-                    editTextLocation.setLongitude(longtitude);
-                    noteData.setLocation(editTextLocation);
-
-                } else {
-                    Toast.makeText(EditNotesActivity.this, "You need to set the Location", Toast.LENGTH_SHORT).show();
-                }
-
                 String noteDescription = NoteDescriptionText.getText().toString();
                 noteData.setDescription(noteDescription);
 
@@ -109,8 +96,8 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
                 note.put("Name", noteData.getName());
                 note.put("Timestamp", noteData.getTimeStamp());
                 note.put("Description", noteData.getDescription());
-                note.put("Latitude", noteData.getLocation().getLatitude());
-                note.put("Longtitude", noteData.getLocation().getLongitude());
+                note.put("Latitude", noteData.getLocation().latitude);
+                note.put("Longtitude", noteData.getLocation().longitude);
                 note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
 
                 firebaseDb.collection("Notes")

@@ -18,7 +18,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +30,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 
 import java.text.DateFormat;
@@ -41,7 +44,7 @@ public class MemoryAppService extends Service {
     NotificationCompat.Builder notification;
     NotificationManager nManager;
     NotificationChannel nChannel;
-    Intent notificationIntent, notesReadyIntent;
+    Intent notificationIntent, notesReadyIntent, locationReadyIntent;
     FirebaseUser currentUser;
     FirebaseFirestore database;
     DocumentReference userRef;
@@ -50,7 +53,7 @@ public class MemoryAppService extends Service {
     String currentLocationReady;
     private FusedLocationProviderClient mFusedLocationClient;
     String notesReady;
-    Location currentLocation;
+    LatLng currentLocation;
 
     int ONGOING_NOTIFICATION_ID = 1337;
 
@@ -69,11 +72,12 @@ public class MemoryAppService extends Service {
         notesReady = "NOTES_READY";
         nManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         lastFourNotes = new ArrayList<NoteDataModel>();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //Set broadcast receiver
-        IntentFilter filter = new IntentFilter();
+    /*    IntentFilter filter = new IntentFilter();
         filter.addAction(currentLocationReady);
-        this.registerReceiver(br, filter);
+        this.registerReceiver(br, filter);*/
     }
 
     @Override
@@ -129,6 +133,10 @@ public class MemoryAppService extends Service {
 
         notesReadyIntent = new Intent();
         notesReadyIntent.setAction(notesReady);
+        locationReadyIntent = new Intent();
+        locationReadyIntent.setAction(currentLocationReady);
+
+        getLocation();
 
         updateLastFourNotes();
         sendBroadcast(notesReadyIntent);
@@ -142,9 +150,7 @@ public class MemoryAppService extends Service {
                 .set(note);
     }
 
-    public String getCurrentLocation(){
-        return "21, 2"; //GET DAT LOCATION PLS
-    }
+    public LatLng getCurrentLocation(){ return currentLocation; }
 
     public List<NoteDataModel> getLastFourNotes() {
         return lastFourNotes;
@@ -167,16 +173,20 @@ public class MemoryAppService extends Service {
         }
     }
 
-    public Location getLocation() {
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+    public void getLocation() {
+
         int hasPermission = this.checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION");
         if(hasPermission == 0) {
             mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    .addOnCompleteListener(new OnCompleteListener<Location>() {
                         @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                currentLocation = location;
+                        public void onComplete(@NonNull Task<Location> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+
+                                Location location = task.getResult();
+                                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                                sendBroadcast(locationReadyIntent);
                             }
                         }
                     });
@@ -185,7 +195,6 @@ public class MemoryAppService extends Service {
             currentLocation = null;
             Toast.makeText(this, "You need to allow location-services", Toast.LENGTH_SHORT).show();
         }
-        return currentLocation;
     }
 
     //Inspiration from: https://developer.android.com/guide/components/broadcasts.html
