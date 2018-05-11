@@ -55,22 +55,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="52dp"
         android:text="@string/CancelBtnText"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/OkBtn"
-        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/OkBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="60dp"
+        android:layout_marginEnd="68dp"
         android:text="@string/OkBtnText"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="554dp" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/CancelBtn"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/NotePictureImageView"
