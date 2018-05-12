@@ -158,10 +158,25 @@ public class MemoryAppService extends Service {
         return Service.START_NOT_STICKY;
     }
 
-    public void SaveNote(NoteDataModel note){
-        userRef.collection("Notes")
-                .document(note.getName())
-                .set(note);
+    public void SaveNote(final NoteDataModel note){
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("Name", note.getName());
+                map.put("Timestamp", note.getTimeStamp());
+                map.put("Description", note.getDescription());
+                map.put("Latitude", note.getLocation().latitude);
+                map.put("Longitude", note.getLocation().longitude);
+
+                userRef.collection("Notes")
+                        .document(note.getName())
+                        .set(map);
+            }
+        });
+
+        t.start();
     }
 
     public LatLng getCurrentLocation(){ return currentLocation; }

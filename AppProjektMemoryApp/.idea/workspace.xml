@@ -11,6 +11,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c6e8cb3-392f-4b99-8107-083cc411955b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,15 +47,18 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="161" column="0" lean-forward="false" selection-start-line="161" selection-start-column="0" selection-end-line="161" selection-end-column="0" />
+            <state relative-caret-position="510">
+              <caret line="109" column="5" lean-forward="false" selection-start-line="109" selection-start-column="5" selection-end-line="109" selection-end-column="5" />
               <folding>
                 <element signature="e#1656#1711#0" expanded="true" />
                 <element signature="e#1734#1779#0" expanded="true" />
-                <element signature="e#5448#5807#0" expanded="true" />
-                <element signature="e#5806#5807#0" expanded="true" />
-                <element signature="e#5850#6319#0" expanded="true" />
-                <element signature="e#6318#6319#0" expanded="true" />
+                <element signature="e#2986#4175#0" expanded="true" />
+                <element signature="e#3944#3997#0" expanded="true" />
+                <element signature="e#4174#4175#0" expanded="true" />
+                <element signature="e#4791#5150#0" expanded="true" />
+                <element signature="e#5149#5150#0" expanded="true" />
+                <element signature="e#5193#5662#0" expanded="true" />
+                <element signature="e#5661#5662#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -54,8 +67,8 @@
       <file leaf-file-name="MemoryAppService.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="197" column="5" lean-forward="true" selection-start-line="197" selection-start-column="5" selection-end-line="197" selection-end-column="5" />
+            <state relative-caret-position="442">
+              <caret line="177" column="0" lean-forward="true" selection-start-line="177" selection-start-column="0" selection-end-line="177" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3022#3077#0" expanded="true" />
@@ -69,24 +82,17 @@
                 <element signature="e#5399#5451#0" expanded="true" />
                 <element signature="e#5493#5544#0" expanded="true" />
                 <element signature="e#5876#5919#0" expanded="true" />
-                <element signature="e#7081#8077#0" expanded="true" />
-                <element signature="e#8076#8077#0" expanded="true" />
-                <element signature="e#8346#8907#0" expanded="true" />
-                <element signature="e#8906#8907#0" expanded="true" />
-                <element signature="e#9210#9734#0" expanded="true" />
-                <element signature="e#9460#9511#0" expanded="true" />
-                <element signature="e#9733#9734#0" expanded="true" />
+                <element signature="e#6634#7236#0" expanded="true" />
+                <element signature="e#6758#6774#0" expanded="true" />
+                <element signature="e#7235#7236#0" expanded="true" />
+                <element signature="e#7637#8633#0" expanded="true" />
+                <element signature="e#8632#8633#0" expanded="true" />
+                <element signature="e#8902#9463#0" expanded="true" />
+                <element signature="e#9462#9463#0" expanded="true" />
+                <element signature="e#9766#10290#0" expanded="true" />
+                <element signature="e#10016#10067#0" expanded="true" />
+                <element signature="e#10289#10290#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OnCompleteListener.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/play-services-tasks-15.0.1.aar/9b3b7e5f70dfaab4f03bffde04a6d90c/jars/classes.jar!/com/google/android/gms/tasks/OnCompleteListener.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -2259,11 +2265,11 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Models/locationObjectImpl.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Models/locationObject.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Models/NoteDataModel.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -2682,21 +2688,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="161" column="0" lean-forward="false" selection-start-line="161" selection-start-column="0" selection-end-line="161" selection-end-column="0" />
-          <folding>
-            <element signature="e#1656#1711#0" expanded="true" />
-            <element signature="e#1734#1779#0" expanded="true" />
-            <element signature="e#5448#5807#0" expanded="true" />
-            <element signature="e#5806#5807#0" expanded="true" />
-            <element signature="e#5850#6319#0" expanded="true" />
-            <element signature="e#6318#6319#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/CreateNoteActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1234">
@@ -2757,10 +2748,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="109" column="5" lean-forward="false" selection-start-line="109" selection-start-column="5" selection-end-line="109" selection-end-column="5" />
+          <folding>
+            <element signature="e#1656#1711#0" expanded="true" />
+            <element signature="e#1734#1779#0" expanded="true" />
+            <element signature="e#2986#4175#0" expanded="true" />
+            <element signature="e#3944#3997#0" expanded="true" />
+            <element signature="e#4174#4175#0" expanded="true" />
+            <element signature="e#4791#5150#0" expanded="true" />
+            <element signature="e#5149#5150#0" expanded="true" />
+            <element signature="e#5193#5662#0" expanded="true" />
+            <element signature="e#5661#5662#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="197" column="5" lean-forward="true" selection-start-line="197" selection-start-column="5" selection-end-line="197" selection-end-column="5" />
+        <state relative-caret-position="442">
+          <caret line="177" column="0" lean-forward="true" selection-start-line="177" selection-start-column="0" selection-end-line="177" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3022#3077#0" expanded="true" />
@@ -2774,13 +2783,16 @@
             <element signature="e#5399#5451#0" expanded="true" />
             <element signature="e#5493#5544#0" expanded="true" />
             <element signature="e#5876#5919#0" expanded="true" />
-            <element signature="e#7081#8077#0" expanded="true" />
-            <element signature="e#8076#8077#0" expanded="true" />
-            <element signature="e#8346#8907#0" expanded="true" />
-            <element signature="e#8906#8907#0" expanded="true" />
-            <element signature="e#9210#9734#0" expanded="true" />
-            <element signature="e#9460#9511#0" expanded="true" />
-            <element signature="e#9733#9734#0" expanded="true" />
+            <element signature="e#6634#7236#0" expanded="true" />
+            <element signature="e#6758#6774#0" expanded="true" />
+            <element signature="e#7235#7236#0" expanded="true" />
+            <element signature="e#7637#8633#0" expanded="true" />
+            <element signature="e#8632#8633#0" expanded="true" />
+            <element signature="e#8902#9463#0" expanded="true" />
+            <element signature="e#9462#9463#0" expanded="true" />
+            <element signature="e#9766#10290#0" expanded="true" />
+            <element signature="e#10016#10067#0" expanded="true" />
+            <element signature="e#10289#10290#0" expanded="true" />
           </folding>
         </state>
       </provider>

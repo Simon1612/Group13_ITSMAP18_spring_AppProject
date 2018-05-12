@@ -79,43 +79,32 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 quicknoteText = quicknoteEdit.getText().toString();
+                NoteDataModel tempNote;
 
                 if(quicknoteText.length() > 10)
                     textSnip = String.format("%s...", quicknoteText.substring(0, 7));
                 else
                     textSnip = quicknoteText;
 
-                if(recentNotesList.size() >= 4){
+                if(recentNotesList.size() >= 4)
                     recentNotesList.remove(0);
-                    try{
-                        recentNotesList.add(new NoteDataModel(
-                                "Quicknote: " + textSnip,
-                                quicknoteText,
-                                location.latitude, location.longitude));
-                    }
-                    catch(Exception e){
-                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this,  getResources().getString(R.string.NoteCreationFailed), Toast.LENGTH_SHORT).show();
-                    }
 
-                    notesListAdapter.notifyDataSetChanged();
-                    quicknoteEdit.getText().clear();
-                }
-                else{
-                    try{
-                        recentNotesList.add(new NoteDataModel(
-                                "Quicknote: " + textSnip,
-                                quicknoteText,
-                                location.latitude, location.longitude));
-                    }
-                    catch(Exception e){
-                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.NoteCreationFailed) , Toast.LENGTH_SHORT).show();
-                     }
+                tempNote = new NoteDataModel(
+                    "Quicknote: " + textSnip,
+                    quicknoteText,
+                    location.latitude, location.longitude);
 
-                    notesListAdapter.notifyDataSetChanged();
-                    quicknoteEdit.getText().clear();
+                try{
+                    recentNotesList.add(tempNote);
+                    service.SaveNote(tempNote);
                 }
+                catch(Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this,  getResources().getString(R.string.NoteCreationFailed), Toast.LENGTH_SHORT).show();
+                }
+
+                notesListAdapter.notifyDataSetChanged();
+                quicknoteEdit.getText().clear();
             }
         });
     }
