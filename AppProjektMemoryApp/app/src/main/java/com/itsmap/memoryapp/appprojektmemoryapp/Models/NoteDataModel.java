@@ -2,6 +2,8 @@ package com.itsmap.memoryapp.appprojektmemoryapp.Models;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 
@@ -11,8 +13,8 @@ public class NoteDataModel implements Serializable {
         TimeStamp = DateFormat.getInstance().format(System.currentTimeMillis());
         Name = _name;
         Description = _noteDescription;
-        Location.setLatitude(_latitude);
-        Location.setLongitude(_longtitude);
+
+        Location = new LatLng(_latitude, _longtitude);
     }
 
     private String Name;
@@ -27,7 +29,11 @@ public class NoteDataModel implements Serializable {
     public void setDescription(String description) { this.Description = description; }
     public String getDescription() { return Description; }
 
-    private Location Location;
+    /*private Location Location;
     public void setLocation(Location location) { Location = location; }
-    public Location getLocation() { return Location; }
+    public Location getLocation() { return Location; }*/
+
+    private LatLng Location;
+    public void setLocation(LatLng location) { Location = location; }
+    public LatLng getLocation() { return Location; }
 }

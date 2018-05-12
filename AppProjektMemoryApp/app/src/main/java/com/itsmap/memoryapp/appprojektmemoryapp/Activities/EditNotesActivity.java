@@ -1,11 +1,9 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -18,7 +16,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,22 +29,20 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
-import java.io.Serializable;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.itsmap.memoryapp.appprojektmemoryapp.Activities.CreateNoteActivity.CAMERA_PERMISSIONS_REQUEST;
+public class EditNotesActivity extends AppCompatActivity
+implements OnMapReadyCallback {
 
-public class EditNotesActivity extends AppCompatActivity {
+    final static int CAMERA_REQUEST = 167;
+    NoteDataModel noteData;
+    Button editPictureBtn, OkBtn, CancelBtn;
+    EditText NoteDescriptionText, NoteNameText;
+    ImageView NotePictureImageView;
 
-NoteDataModel noteData;
-Button editPictureBtn, OkBtn, CancelBtn;
-EditText NoteDescriptionText, LocationEditText, TimeStampEditText;
-ImageView NotePictureImageView;
-
-Boolean cameraPermissionGranted;
-
-FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
+    FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,29 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
         noteData = (NoteDataModel) intent.getSerializableExtra("noteData");
+        //For test
+        if(noteData == null) {
+            noteData = new NoteDataModel("Invalid Note", "", 0, 0);
+        }
+        try{
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            if(noteData.getLocation() != null) {
+                mapFragment.getMapAsync(EditNotesActivity.this);
+            } else {
+                noteData.setLocation(new LatLng(0,0));
+                mapFragment.getMapAsync(EditNotesActivity.this);
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
 
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
         NoteDescriptionText.setText(noteData.getDescription());
+
+        NoteNameText = findViewById(R.id.NoteNameText);
+        NoteNameText.setText(noteData.getName());
 
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
 
@@ -60,12 +81,8 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
         editPictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkCallingOrSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSIONS_REQUEST);
-                } else {
                     Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
-                }
+                    startActivityForResult(pictureIntent,CAMERA_REQUEST);
             }
         });
 
@@ -77,40 +94,24 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
             @Override
             public void onClick(View v) {
 
-                String timeStamp = TimeStampEditText.getText().toString();
-                if(timeStamp != "") {
-                    noteData.setTimeStamp(timeStamp);
+                String name = NoteNameText.getText().toString();
+                if(name != "") {
+                    noteData.setName(name);
                 }
                 else {
-                    Toast.makeText(EditNotesActivity.this, "You need to set the Timestamp", Toast.LENGTH_SHORT).show();
-                }
-
-                String location = LocationEditText.getText().toString();
-                if(location != "") {
-                    Double latitude = Double.valueOf(location.substring(location.lastIndexOf("Latitude: ") ,location.indexOf("Longtitude")));
-                    Double longtitude = Double.valueOf(location.substring(location.lastIndexOf("Longtitude: ")));
-                    Location editTextLocation = new Location("");
-                    editTextLocation.setLatitude(latitude);
-                    editTextLocation.setLongitude(longtitude);
-                    noteData.setLocation(editTextLocation);
-
-                } else {
-                    Toast.makeText(EditNotesActivity.this, "You need to set the Location", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditNotesActivity.this, "You need to set the Name", Toast.LENGTH_SHORT).show();
                 }
 
                 String noteDescription = NoteDescriptionText.getText().toString();
                 noteData.setDescription(noteDescription);
-
-                int pictureId = NotePictureImageView.getId();
-               // noteData.setPictureId(pictureId);
 
                 Map<String, Object> note = new HashMap<String, Object>();
                 note.put("Id", 123123); //Skal sættes til det samme som den Note der ønskes Redigeret
                 note.put("Name", noteData.getName());
                 note.put("Timestamp", noteData.getTimeStamp());
                 note.put("Description", noteData.getDescription());
-                note.put("Latitude", noteData.getLocation().getLatitude());
-                note.put("Longtitude", noteData.getLocation().getLongitude());
+                note.put("Latitude", noteData.getLocation().latitude);
+                note.put("Longtitude", noteData.getLocation().longitude);
                 note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
 
                 firebaseDb.collection("Notes")
@@ -141,23 +142,15 @@ FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case CAMERA_PERMISSIONS_REQUEST: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    cameraPermissionGranted = true;
-                    Intent pictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
-                } else {
-                    cameraPermissionGranted = false;
-                }
-                break;
-            }
-        }
+    public void onMapReady(final GoogleMap googleMap) {
+        LatLng currentLocation = new LatLng(noteData.getLocation().latitude, noteData.getLocation().longitude);
+        googleMap.addMarker(new MarkerOptions().position(currentLocation)
+                .title("New Note"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAMERA_PERMISSIONS_REQUEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             NotePictureImageView.setImageBitmap(photo);
         }
