@@ -40,6 +40,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:15.0.0'
     implementation 'com.google.android.gms:play-services-maps:15.0.0'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

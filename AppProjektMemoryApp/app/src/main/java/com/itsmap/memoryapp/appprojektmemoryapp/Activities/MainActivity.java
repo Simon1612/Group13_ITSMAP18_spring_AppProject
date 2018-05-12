@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity {
     CheckBox remindMeLaterCheckbox;
     List<NoteDataModel> recentNotesList;
     Intent serviceIntent;
-    String currentLocationReady, textSnip, quicknoteText;
+    String currentLocationReady, notesReady, textSnip, quicknoteText;
     NotesListAdapter notesListAdapter;
     LatLng location;
     boolean amIBound = false;
@@ -46,6 +46,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_home_screen);
 
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
+        notesReady = getResources().getString(R.string.notesReady);
 
         createQuicknoteButton = findViewById(R.id.createQuicknoteButton);
         homescreenNotesListView = findViewById(R.id.homescreenNotesList);
@@ -56,9 +57,16 @@ public class MainActivity extends BaseActivity {
         serviceIntent = new Intent(this, MemoryAppService.class);
 
         bindService(serviceIntent, myServiceConnection, Context.BIND_AUTO_CREATE);
+
+        //Register receiver for currentLocationReady event
+        IntentFilter locationFilter = new IntentFilter();
+        locationFilter.addAction(currentLocationReady);
+        this.registerReceiver(locationBR, locationFilter);
+
+        //Register receiver for notesReady event
         IntentFilter filter = new IntentFilter();
-        filter.addAction(currentLocationReady);
-        this.registerReceiver(br, filter);
+        filter.addAction(notesReady);
+        this.registerReceiver(notesBR, filter);
 
         //Set adapter for listView
         notesListAdapter = new NotesListAdapter(this, recentNotesList);
@@ -130,13 +138,28 @@ public class MainActivity extends BaseActivity {
         }
     };
 
-    //Inspiration from: https://developer.android.com/guide/components/broadcasts.html
-    private BroadcastReceiver br = new BroadcastReceiver(){
+    private BroadcastReceiver locationBR = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
             //recentNotesList.addAll(service.getLastFourNotes());
             try{
                 location = service.getCurrentLocation();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver notesBR = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //recentNotesList.addAll(service.getLastFourNotes());
+            try{
+                recentNotesList.clear();
+                recentNotesList.addAll(service.getLastFourNotes());
+
+                notesListAdapter.notifyDataSetChanged();
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -150,7 +173,8 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
 
         unbindService(myServiceConnection);
-        unregisterReceiver(br);
+        unregisterReceiver(locationBR);
+        unregisterReceiver(notesBR);
 
         /*SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();

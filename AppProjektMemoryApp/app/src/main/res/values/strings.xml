@@ -44,6 +44,7 @@
     <string name="RemindMeLaterCheckBoxTxt">Remind me later</string>
     <string name="CreateQuicknoteButtonTxt">Create Quicknote</string>
     <string name="currentLocationReady">CURRENT_LOCATION_READY</string>
+    <string name="notesReady">NOTES_READY</string>
     <string name="notificationTitle">Memory Service</string>
     <string name="notificationText">Friendly reminder that you have daily notes.</string>
     <string name="firstNoteName">First Note</string>
