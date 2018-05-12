@@ -11,29 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c6e8cb3-392f-4b99-8107-083cc411955b" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_fasterxml_jackson_core_jackson_annotations_2_9_0_jar.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_fasterxml_jackson_core_jackson_core_2_9_5_jar.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_fasterxml_jackson_core_jackson_databind_2_9_5_jar.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Models/locationObject.java" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/resourceHashesCache.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/resourceHashesCache.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/jarAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/jarAnalysis.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Models/NoteDataModel.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Models/NoteDataModel.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -76,8 +54,8 @@
       <file leaf-file-name="MemoryAppService.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="467">
-              <caret line="190" column="33" lean-forward="false" selection-start-line="190" selection-start-column="33" selection-end-line="190" selection-end-column="33" />
+            <state relative-caret-position="486">
+              <caret line="197" column="5" lean-forward="true" selection-start-line="197" selection-start-column="5" selection-end-line="197" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3022#3077#0" expanded="true" />
@@ -93,12 +71,22 @@
                 <element signature="e#5876#5919#0" expanded="true" />
                 <element signature="e#7081#8077#0" expanded="true" />
                 <element signature="e#8076#8077#0" expanded="true" />
-                <element signature="e#8840#9401#0" expanded="true" />
-                <element signature="e#9400#9401#0" expanded="true" />
-                <element signature="e#9704#10228#0" expanded="true" />
-                <element signature="e#9954#10005#0" expanded="true" />
-                <element signature="e#10227#10228#0" expanded="true" />
+                <element signature="e#8346#8907#0" expanded="true" />
+                <element signature="e#8906#8907#0" expanded="true" />
+                <element signature="e#9210#9734#0" expanded="true" />
+                <element signature="e#9460#9511#0" expanded="true" />
+                <element signature="e#9733#9734#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OnCompleteListener.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/play-services-tasks-15.0.1.aar/9b3b7e5f70dfaab4f03bffde04a6d90c/jars/classes.jar!/com/google/android/gms/tasks/OnCompleteListener.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -2761,10 +2749,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/play-services-tasks-15.0.1.aar/9b3b7e5f70dfaab4f03bffde04a6d90c/jars/classes.jar!/com/google/android/gms/tasks/OnCompleteListener.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="467">
-          <caret line="190" column="33" lean-forward="false" selection-start-line="190" selection-start-column="33" selection-end-line="190" selection-end-column="33" />
+        <state relative-caret-position="486">
+          <caret line="197" column="5" lean-forward="true" selection-start-line="197" selection-start-column="5" selection-end-line="197" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3022#3077#0" expanded="true" />
@@ -2780,11 +2776,11 @@
             <element signature="e#5876#5919#0" expanded="true" />
             <element signature="e#7081#8077#0" expanded="true" />
             <element signature="e#8076#8077#0" expanded="true" />
-            <element signature="e#8840#9401#0" expanded="true" />
-            <element signature="e#9400#9401#0" expanded="true" />
-            <element signature="e#9704#10228#0" expanded="true" />
-            <element signature="e#9954#10005#0" expanded="true" />
-            <element signature="e#10227#10228#0" expanded="true" />
+            <element signature="e#8346#8907#0" expanded="true" />
+            <element signature="e#8906#8907#0" expanded="true" />
+            <element signature="e#9210#9734#0" expanded="true" />
+            <element signature="e#9460#9511#0" expanded="true" />
+            <element signature="e#9733#9734#0" expanded="true" />
           </folding>
         </state>
       </provider>

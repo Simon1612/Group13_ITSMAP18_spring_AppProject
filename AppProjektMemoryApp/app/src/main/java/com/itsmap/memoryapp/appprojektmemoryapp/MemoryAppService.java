@@ -195,21 +195,6 @@ public class MemoryAppService extends Service {
                         }
                     }
                 });
-
-        /*synchronized (t){
-            if(t.isSuccessful())
-            {
-
-                List<NoteDataModel> tempList = new ArrayList<NoteDataModel>();
-                //tempList = (List<NoteDataModel>) t.getResult();
-                tempList.add((NoteDataModel) t.getResult());
-
-                lastFourNotes.addAll(tempList);
-                sendBroadcast(notesReadyIntent);
-            } else {
-                Log.d(TAG, "get failed with ", t.getException());
-            }
-        }*/
     }
 
     public void getLocation() {
