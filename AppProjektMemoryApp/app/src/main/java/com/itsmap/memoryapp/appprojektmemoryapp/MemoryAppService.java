@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -30,12 +31,24 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import static android.content.ContentValues.TAG;
 
@@ -69,7 +82,7 @@ public class MemoryAppService extends Service {
     @Override
     public void onCreate() {
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
-        notesReady = "NOTES_READY";
+        notesReady = getResources().getString(R.string.notesReady);
         nManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         lastFourNotes = new ArrayList<NoteDataModel>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -137,17 +150,33 @@ public class MemoryAppService extends Service {
         locationReadyIntent.setAction(currentLocationReady);
 
         getLocation();
-
         updateLastFourNotes();
+
+        sendBroadcast(locationReadyIntent);
         sendBroadcast(notesReadyIntent);
 
         return Service.START_NOT_STICKY;
     }
 
-    public void SaveNote(NoteDataModel note){
-        userRef.collection("Notes")
-                .document(note.getName())
-                .set(note);
+    public void SaveNote(final NoteDataModel note){
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("Name", note.getName());
+                map.put("Timestamp", note.getTimeStamp());
+                map.put("Description", note.getDescription());
+                map.put("Latitude", note.getLocation().latitude);
+                map.put("Longitude", note.getLocation().longitude);
+
+                userRef.collection("Notes")
+                        .document(note.getName())
+                        .set(map);
+            }
+        });
+
+        t.start();
     }
 
     public LatLng getCurrentLocation(){ return currentLocation; }
@@ -156,21 +185,31 @@ public class MemoryAppService extends Service {
         return lastFourNotes;
     }
 
-    public void updateLastFourNotes() {
-        Task t = userRef.collection("Notes")
+    private void updateLastFourNotes() {
+         userRef.collection("Notes")
                 .orderBy("timeStamp", Query.Direction.DESCENDING)
                 .limit(4)
-                .get();
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            ObjectMapper mapper = new ObjectMapper();
+                            NoteDataModel tempData;
+                            for(QueryDocumentSnapshot doc : task.getResult()){
+                                JSONObject json = new JSONObject(doc.getData());
 
-        synchronized (t){
-            if(t.isSuccessful())
-            {
-                lastFourNotes.addAll((List<NoteDataModel>) t.getResult());
-                sendBroadcast(notesReadyIntent);
-            } else {
-                Log.d(TAG, "get failed with ", t.getException());
-            }
-        }
+                                try {
+                                    tempData = mapper.readValue(json.toString(), NoteDataModel.class);
+                                    lastFourNotes.add(tempData);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            sendBroadcast(notesReadyIntent);
+                        }
+                    }
+                });
     }
 
     public void getLocation() {
