@@ -1,20 +1,33 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Models;
 
-import android.location.Location;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 import java.text.DateFormat;
 
-public class NoteDataModel implements Serializable {
+public class NoteDataModel implements Serializable{
 
-    public NoteDataModel(String _name, String _noteDescription, double _latitude, double _longtitude) {
+
+    public NoteDataModel(String _name, String _noteDescription, double _latitude, double _longitude) {
         TimeStamp = DateFormat.getInstance().format(System.currentTimeMillis());
         Name = _name;
         Description = _noteDescription;
 
-        Location = new LatLng(_latitude, _longtitude);
+        Location = new LatLng(_latitude, _longitude);
+    }
+
+    @JsonCreator
+    public NoteDataModel(@JsonProperty("name") String _name,
+                         @JsonProperty("description") String _noteDescription,
+                         @JsonProperty("location") locationObject _location,
+                         @JsonProperty("timeStamp") String _timeStamp) {
+
+        TimeStamp = _timeStamp;
+        Name = _name;
+        Description = _noteDescription;
+        Location = new LatLng(_location.getLatitude(), _location.getLongitude());
     }
 
     private String Name;
