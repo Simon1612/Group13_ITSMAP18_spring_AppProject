@@ -241,7 +241,7 @@ public class MainActivity extends BaseActivity {
             //recentNotesList.addAll(service.getLastFourNotes());
             try{
                 recentNotesList.clear();
-                recentNotesList.addAll(service.getLastFourNotes());
+                recentNotesList.addAll(service.getLastNotes());
 
                 notesListAdapter.notifyDataSetChanged();
             }
