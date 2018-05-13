@@ -104,7 +104,6 @@ public class MemoryAppService extends Service {
         database = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         userRef = database.collection("Users").document(currentUser.getEmail());
-
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -123,7 +122,6 @@ public class MemoryAppService extends Service {
                 }
             }
         });
-
         notificationIntent = new Intent(this, MemoryAppService.class);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -213,7 +211,6 @@ public class MemoryAppService extends Service {
     }
 
     public void getLocation() {
-
         int hasPermission = this.checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION");
         if(hasPermission == 0) {
             mFusedLocationClient.getLastLocation()

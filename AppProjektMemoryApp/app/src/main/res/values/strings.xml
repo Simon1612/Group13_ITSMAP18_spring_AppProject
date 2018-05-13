@@ -57,7 +57,17 @@
     <string name="DrawerItemProfile">My profile</string>
     <string name="DrawerItemMap">Map stuff</string>
     <string name="NoteCreationFailed">Failed to create note.</string>
+    <string name="LocationPermissionsSuccess">Location-services was succesfully enabled</string>
+    <string name="CameraPermissionsSuccess">Camera-services was succesfully enabled</string>
+    <string name="LocationPermissionsFailed">Something went wrong with enabling Location-services</string>
+    <string name="CameraPermissionsFailed">Something went wrong with enabling Camera-services</string>
+    <string name="LocationPermissionsEncourage">The App will not be that much fun if you do not enable location-services</string>
+    <string name="CameraPermissionsEncourage">You will not be able to add awesome pictures if you do not enable Camera-services</string>
+    <string name="StoragePermissionsSuccess">External-storage was succesfully enabled</string>
+    <string name="StoragePermissionsFailed">Something went wrong with enabling External-storage</string>
+    <string name="StoragePermissionsEncourage">You will not be able to save your noted if you do not enable External-storage</string>
 
 
     <string name="googleMapsApiKey">AIzaSyCWkDTUPbsjbFlETjI8kBpbjOyhNbRjDq0</string>
+    <string name="CreateNoteBtnTxt">Create New Note</string>
 </resources>
