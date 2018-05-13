@@ -126,7 +126,7 @@ public class MemoryAppService extends Service {
         return Service.START_NOT_STICKY;
     }
 
-    private void createFirstNote(){
+    private void createFirstNote() {
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -146,6 +146,7 @@ public class MemoryAppService extends Service {
                 }
             }
         });
+    }
 
     private void setupNotification(){
         notificationIntent = new Intent(this, MemoryAppService.class);
@@ -192,9 +193,7 @@ public class MemoryAppService extends Service {
 
     public LatLng getCurrentLocation(){ return currentLocation; }
 
-    public List<NoteDataModel> getLastNotes() {
-        return lastNotes;
-    }
+    public List<NoteDataModel> getLastNotes() {return lastNotes; }
 
     public List<NoteDataModel> getMyNotes(){return myNotes;}
 
