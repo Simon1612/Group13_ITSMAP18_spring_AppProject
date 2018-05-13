@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MapActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.ViewNotesActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.LogIn.ProfileScreen;
@@ -50,6 +52,11 @@ public class BaseActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId())
                 {
+                    case R.id.HomeItem:
+                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(homeIntent);
+                        break;
+
                     case R.id.NotesItem:
                         Intent notesIntent = new Intent(getApplicationContext(), ViewNotesActivity.class);
                         startActivity(notesIntent);

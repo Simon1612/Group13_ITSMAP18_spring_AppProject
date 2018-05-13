@@ -5,6 +5,9 @@
 
     <group android:checkableBehavior="none">
         <item
+            android:id="@+id/HomeItem"
+            android:title="@string/DrawerItemHome" />
+        <item
             android:id="@+id/NotesItem"
             android:title="@string/DrawerItemNotes" />
         <item

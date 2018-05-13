@@ -45,6 +45,7 @@
     <string name="CreateQuicknoteButtonTxt">Create Quicknote</string>
     <string name="currentLocationReady">CURRENT_LOCATION_READY</string>
     <string name="notesReady">NOTES_READY</string>
+    <string name="myNotesReady">MY_NOTES_READY</string>
     <string name="notificationTitle">Memory Service</string>
     <string name="notificationText">Friendly reminder that you have daily notes.</string>
     <string name="firstNoteName">First Note</string>
@@ -52,10 +53,12 @@
     <string name="firstNoteLocation">"Heaven!"</string>
 
     <string name="NavigationHeaderTitle">"TITLE + ICON?"</string>
+    <string name="DrawerItemHome">Home</string>
     <string name="DrawerItemSettings">Settings</string>
     <string name="DrawerItemNotes">My Notes</string>
     <string name="DrawerItemProfile">My profile</string>
     <string name="DrawerItemMap">Map stuff</string>
+
     <string name="NoteCreationFailed">Failed to create note.</string>
 
 
