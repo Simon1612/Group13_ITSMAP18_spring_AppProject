@@ -18,11 +18,13 @@ import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.NotesListAdapter;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewNotesActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ViewNotesActivity extends BaseActivity implements SwipyRefreshLayout.OnRefreshListener {
 
     ListView myNotesListView;
     NotesListAdapter myNotesListAdapter;
@@ -34,7 +36,7 @@ public class ViewNotesActivity extends BaseActivity implements SwipeRefreshLayou
     Intent serviceIntent;
     Button testButton;
     String myNotesReady;
-    SwipeRefreshLayout refreshLayout;
+    SwipyRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class ViewNotesActivity extends BaseActivity implements SwipeRefreshLayou
 
         refreshLayout = findViewById(R.id.myNotesSwipeRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
+
 
         myNotesReady = getResources().getString(R.string.myNotesReady);
 
@@ -72,9 +75,9 @@ public class ViewNotesActivity extends BaseActivity implements SwipeRefreshLayou
 
 
     @Override
-    public void onRefresh()
+    public void onRefresh(SwipyRefreshLayoutDirection direction)
     {
-        service.updateMyNotes(1); //Send command as intent instead?
+        service.updateMyNotes(4); //Send command as intent instead?
     }
 
     private ServiceConnection myServiceConnection = new ServiceConnection() {
@@ -86,7 +89,9 @@ public class ViewNotesActivity extends BaseActivity implements SwipeRefreshLayou
             amIBound = true;
 
             service.startService(serviceIntent);
-            service.updateMyNotes(4);
+            myNotesList.addAll(service.getMyNotes());
+            myNotesListAdapter.notifyDataSetChanged();
+            //service.updateMyNotes(4);
         }
 
         @Override

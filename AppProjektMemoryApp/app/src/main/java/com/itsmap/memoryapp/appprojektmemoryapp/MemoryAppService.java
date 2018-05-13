@@ -118,12 +118,40 @@ public class MemoryAppService extends Service {
         locationReadyIntent.setAction(currentLocationReady);
 
         getLocation();
-        updateLastNotes(4);
+        lastNotes = myNotes = updateLastNotes(4, notesReadyIntent);
 
         sendBroadcast(locationReadyIntent);
         sendBroadcast(notesReadyIntent);
 
         return Service.START_NOT_STICKY;
+    }
+
+    public LatLng getCurrentLocation(){ return currentLocation; }
+
+    public List<NoteDataModel> getLastNotes() {return lastNotes; }
+
+    public List<NoteDataModel> getMyNotes(){return myNotes;}
+
+    private void setupNotification(){
+        notificationIntent = new Intent(this, MemoryAppService.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        //Create notification
+        notification =
+                new NotificationCompat.Builder(this, getResources().getString(R.string.app_name))
+                        .setContentTitle(getResources().getString(R.string.notificationTitle))
+                        .setContentText(getResources().getString(R.string.notificationText) + "\n" + DateFormat.getInstance().format(System.currentTimeMillis()))
+                        //.setSmallIcon(R.drawable.ic_stat_service) //TODO: VI SKAL HA ET ICON IK
+                        .setContentIntent(pendingIntent)
+                        .setWhen(System.currentTimeMillis());
+
+        nChannel = new NotificationChannel("1337", getResources().getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
+        nManager.createNotificationChannel(nChannel);
+        notification.setChannelId("1337");
+
+        //Start service as foreground
+        startForeground(ONGOING_NOTIFICATION_ID, notification.build());
     }
 
     private void createFirstNote() {
@@ -148,27 +176,6 @@ public class MemoryAppService extends Service {
         });
     }
 
-    private void setupNotification(){
-        notificationIntent = new Intent(this, MemoryAppService.class);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        //Create notification
-        notification =
-                new NotificationCompat.Builder(this, getResources().getString(R.string.app_name))
-                        .setContentTitle(getResources().getString(R.string.notificationTitle))
-                        .setContentText(getResources().getString(R.string.notificationText) + "\n" + DateFormat.getInstance().format(System.currentTimeMillis()))
-                        //.setSmallIcon(R.drawable.ic_stat_service) VI SKAL HA ET ICON IK
-                        .setContentIntent(pendingIntent)
-                        .setWhen(System.currentTimeMillis());
-
-        nChannel = new NotificationChannel("1337", getResources().getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
-        nManager.createNotificationChannel(nChannel);
-        notification.setChannelId("1337");
-
-        //Start service as foreground
-        startForeground(ONGOING_NOTIFICATION_ID, notification.build());
-    }
 
     public void SaveNote(final NoteDataModel note){
 
@@ -191,69 +198,43 @@ public class MemoryAppService extends Service {
         t.start();
     }
 
-    public LatLng getCurrentLocation(){ return currentLocation; }
 
-    public List<NoteDataModel> getLastNotes() {return lastNotes; }
+    private List<NoteDataModel> updateLastNotes(int limit, final Intent broadcastIntent){
 
-    public List<NoteDataModel> getMyNotes(){return myNotes;}
+        final List<NoteDataModel> tmpList = new ArrayList<NoteDataModel>();
 
-    private void updateLastNotes(int limit) {
-        //Clear list to avoid duplicates
-        lastNotes.clear();
-
-         userRef.collection("Notes")
+        userRef.collection("Notes")
                 .orderBy("Timestamp", Query.Direction.DESCENDING)
                 .limit(limit)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            ObjectMapper mapper = new ObjectMapper();
-                            NoteDataModel tempData;
-                            for(QueryDocumentSnapshot doc : task.getResult()){
-                                JSONObject json = new JSONObject(doc.getData());
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    ObjectMapper mapper = new ObjectMapper();
+                    NoteDataModel tempData;
+                    for(QueryDocumentSnapshot doc : task.getResult()){
+                        JSONObject json = new JSONObject(doc.getData());
 
-                                try {
-                                    tempData = mapper.readValue(json.toString(), NoteDataModel.class);
-                                    lastNotes.add(tempData);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            sendBroadcast(notesReadyIntent);
+                        try {
+                            tempData = mapper.readValue(json.toString(), NoteDataModel.class);
+                            tmpList.add(tempData);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
-                });
+
+                    sendBroadcast(broadcastIntent);
+                }
+            }
+        });
+        return tmpList;
     }
+
 
     public void updateMyNotes(int limit){
 
-        if(myNotes.isEmpty()){
-            userRef.collection("Notes")
-                    .orderBy("Timestamp", Query.Direction.DESCENDING)
-                    .limit(limit)
-                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if(task.isSuccessful()){
-                        ObjectMapper mapper = new ObjectMapper();
-                        NoteDataModel tempData;
-                        for(QueryDocumentSnapshot doc : task.getResult()){
-                            JSONObject json = new JSONObject(doc.getData());
-
-                            try {
-                                tempData = mapper.readValue(json.toString(), NoteDataModel.class);
-                                myNotes.add(tempData);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        sendBroadcast(myNotesReadyIntent);
-                    }
-                }
-            });
+        if(myNotes.isEmpty()) {
+            myNotes = updateLastNotes(limit, myNotesReadyIntent);
         }
 
         else{

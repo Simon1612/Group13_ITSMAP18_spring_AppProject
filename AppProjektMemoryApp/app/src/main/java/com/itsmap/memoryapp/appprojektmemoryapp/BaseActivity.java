@@ -54,11 +54,13 @@ public class BaseActivity extends AppCompatActivity {
                 {
                     case R.id.HomeItem:
                         Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(homeIntent);
                         break;
 
                     case R.id.NotesItem:
                         Intent notesIntent = new Intent(getApplicationContext(), ViewNotesActivity.class);
+                        notesIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(notesIntent);
                         break;
 
@@ -69,11 +71,13 @@ public class BaseActivity extends AppCompatActivity {
 
                     case R.id.ProfileItem:
                         Intent profileIntent = new Intent(getApplicationContext(), ProfileScreen.class);
+                        profileIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(profileIntent);
                         break;
 
                     case R.id.MapItem:
                         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mapIntent);
                         break;
                 }
