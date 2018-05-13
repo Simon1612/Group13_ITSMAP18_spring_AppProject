@@ -107,7 +107,6 @@ public class MemoryAppService extends Service {
         database = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         userRef = database.collection("Users").document(currentUser.getEmail());
-
         createFirstNote();
         setupNotification();
 
@@ -147,7 +146,6 @@ public class MemoryAppService extends Service {
                 }
             }
         });
-    }
 
     private void setupNotification(){
         notificationIntent = new Intent(this, MemoryAppService.class);
@@ -292,7 +290,6 @@ public class MemoryAppService extends Service {
     }
 
     public void getLocation() {
-
         int hasPermission = this.checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION");
         if(hasPermission == 0) {
             mFusedLocationClient.getLastLocation()
