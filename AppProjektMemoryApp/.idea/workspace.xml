@@ -10,23 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0fe18e00-80dc-4a18-89c9-320bed1c28cb" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/note_image.png" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/CreateNoteActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/CreateNoteActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/EditNotesActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/EditNotesActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MainActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MapActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/Activities/MapActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/itsmap/memoryapp/appprojektmemoryapp/MemoryAppService.java" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -2190,7 +2174,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-11" />
     <option name="y" value="-29" />
     <option name="width" value="1936" />
@@ -2403,7 +2387,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
