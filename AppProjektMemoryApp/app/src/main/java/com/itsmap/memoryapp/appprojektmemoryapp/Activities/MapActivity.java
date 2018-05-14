@@ -9,6 +9,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,9 +49,13 @@ public class MapActivity extends AppCompatActivity
          */
         @Override
         public void onMapReady(final GoogleMap googleMap) {
+
+            BitmapDescriptor markerImg = BitmapDescriptorFactory.fromResource(R.drawable.note_image);
             LatLng aarhus = new LatLng(56.162939, 10.203921);
             googleMap.addMarker(new MarkerOptions().position(aarhus)
-                    .title("Marker in Aarhus"));
+                    .title("Marker in Aarhus")
+                    .icon(markerImg));
+            googleMap.setMinZoomPreference(10);
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(aarhus));
            /* firebaseDb.collection("Notes").whereEqualTo("Creator", FirebaseAuth.getInstance().getCurrentUser())
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

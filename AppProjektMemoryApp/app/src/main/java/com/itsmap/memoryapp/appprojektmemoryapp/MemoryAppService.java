@@ -1,5 +1,6 @@
 package com.itsmap.memoryapp.appprojektmemoryapp;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,7 +18,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,6 +71,8 @@ public class MemoryAppService extends Service {
     private FusedLocationProviderClient mFusedLocationClient;
     String notesReady, myNotesReady;
     LatLng currentLocation;
+    LocationRequest mLocationRequest;
+    PendingIntent pendingIntent;
 
     int ONGOING_NOTIFICATION_ID = 1337;
 
@@ -90,6 +95,12 @@ public class MemoryAppService extends Service {
         myNotes = new ArrayList<NoteDataModel>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        //currentLocation = new LatLng(56.162939, 10.203921);
+        int hasPermission = checkSelfPermission("android.permission.ACCESS_FINE_LOCATION");
+        if(hasPermission == 0) {
+            createLocationRequest();
+            startLocationUpdate();
+        }
         //Set broadcast receiver
     /*    IntentFilter filter = new IntentFilter();
         filter.addAction(currentLocationReady);
@@ -270,17 +281,14 @@ public class MemoryAppService extends Service {
     }
 
     public void getLocation() {
-        int hasPermission = this.checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION");
+        int hasPermission = checkSelfPermission("android.permission.ACCESS_FINE_LOCATION");
         if(hasPermission == 0) {
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(new OnCompleteListener<Location>() {
                         @Override
                         public void onComplete(@NonNull Task<Location> task) {
                             if (task.isSuccessful() && task.getResult() != null) {
-
-                                Location location = task.getResult();
-                                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-
+                                currentLocation = new LatLng(task.getResult().getLatitude(), task.getResult().getLongitude());
                                 sendBroadcast(locationReadyIntent);
                             }
                         }

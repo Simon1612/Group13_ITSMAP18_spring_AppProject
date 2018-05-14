@@ -1,10 +1,16 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -20,6 +26,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,6 +35,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
@@ -42,12 +51,19 @@ implements OnMapReadyCallback {
     EditText NoteDescriptionText, NoteNameText;
     ImageView NotePictureImageView;
 
-    FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
+    MemoryAppService.LocalBinder binder;
+    Intent serviceIntent;
+    MemoryAppService memoryAppService;
+    Boolean mBound = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_notes_screen);
+
+        serviceIntent = new Intent(this, MemoryAppService.class);
+        bindService(serviceIntent, memoryAppServiceConnection, Context.BIND_AUTO_CREATE);
 
         Intent intent = getIntent();
         noteData = (NoteDataModel) intent.getSerializableExtra("noteData");
@@ -105,28 +121,7 @@ implements OnMapReadyCallback {
                 String noteDescription = NoteDescriptionText.getText().toString();
                 noteData.setDescription(noteDescription);
 
-                Map<String, Object> note = new HashMap<String, Object>();
-                note.put("Id", 123123); //Skal sættes til det samme som den Note der ønskes Redigeret
-                note.put("Name", noteData.getName());
-                note.put("Timestamp", noteData.getTimeStamp());
-                note.put("Description", noteData.getDescription());
-                note.put("Latitude", noteData.getLocation().latitude);
-                note.put("Longtitude", noteData.getLocation().longitude);
-                note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
-
-                firebaseDb.collection("Notes")
-                        .add(note)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d("DbUpdate", "New Note Added to Db");
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DbUpdate", "Error in adding new note to Db");
-                    }
-                });
+               memoryAppService.SaveNote(noteData);
 
                 Intent mainActivityIntent = new Intent(EditNotesActivity.this, MainActivity.class);
                 EditNotesActivity.this.startActivity(mainActivityIntent);
@@ -141,11 +136,36 @@ implements OnMapReadyCallback {
         });
     }
 
+    ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            binder = (MemoryAppService.LocalBinder) service;
+            memoryAppService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            unbindService(memoryAppServiceConnection);
+            mBound = false;
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(memoryAppServiceConnection);
+        mBound = false;
+    }
+
     @Override
     public void onMapReady(final GoogleMap googleMap) {
+        BitmapDescriptor markerImg = BitmapDescriptorFactory.fromResource(R.drawable.note_image);
         LatLng currentLocation = new LatLng(noteData.getLocation().latitude, noteData.getLocation().longitude);
         googleMap.addMarker(new MarkerOptions().position(currentLocation)
-                .title("New Note"));
+                .title("New Note")
+                .icon(markerImg));
+        googleMap.setMinZoomPreference(15);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
     }
 

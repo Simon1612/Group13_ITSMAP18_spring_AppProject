@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -27,7 +29,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,7 +53,7 @@ public class CreateNoteActivity extends AppCompatActivity
     String currentLocationReady;
 
     MemoryAppService.LocalBinder binder;
-    Intent bindingIntent;
+    Intent serviceIntent;
     MemoryAppService memoryAppService;
     Button OkBtn, CancelBtn, TakePictureBtn;
     TextView TimeStampTextView;
@@ -56,7 +61,6 @@ public class CreateNoteActivity extends AppCompatActivity
     ImageView NotePictureImageView;
     NoteDataModel noteData;
 
-    FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
     Boolean mBound = false;
 
 
@@ -67,11 +71,12 @@ public class CreateNoteActivity extends AppCompatActivity
         setContentView(R.layout.activity_create_note);
 
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
-        bindingIntent = new Intent(this, MemoryAppService.class);
-        bindService(bindingIntent, memoryAppServiceConnection, Context.BIND_AUTO_CREATE);
+        serviceIntent = new Intent(this, MemoryAppService.class);
+        bindService(serviceIntent, memoryAppServiceConnection, Context.BIND_AUTO_CREATE);
         IntentFilter filter = new IntentFilter();
         filter.addAction(currentLocationReady);
         this.registerReceiver(br, filter);
+        startService(serviceIntent);
 
         noteData = new NoteDataModel("", "", 0, 0);
 
@@ -100,29 +105,11 @@ public class CreateNoteActivity extends AppCompatActivity
                 noteData.setName(NameText.getText().toString());
                 noteData.setLocation(location);
                 noteData.setDescription(NoteDescriptionText.getText().toString());
-                Map<String, Object> note = new HashMap<String, Object>();
-                note.put("Name", noteData.getName());
-                note.put("Timestamp", noteData.getTimeStamp());
-                note.put("Description", noteData.getDescription());
-                note.put("Latitude", noteData.getLocation().latitude);
-                note.put("Longtitude", noteData.getLocation().longitude);
 
-                firebaseDb.collection("Notes")
-                        .add(note)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d("DbUpdate", "New Note Added to Db");
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DbUpdate", "Error in adding new note to Db");
-                    }
-                });
+                memoryAppService.SaveNote(noteData);
 
                 Intent mainActivityIntent = new Intent(CreateNoteActivity.this, MainActivity.class);
-                CreateNoteActivity.this.startActivity(mainActivityIntent);
+                startActivity(mainActivityIntent);
 
             }
         });
@@ -138,10 +125,15 @@ public class CreateNoteActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
+        BitmapDescriptor markerImg = BitmapDescriptorFactory.fromResource(R.drawable.note_image);
         LatLng currentLocation = new LatLng(location.latitude, location.longitude);
         googleMap.addMarker(new MarkerOptions().position(currentLocation)
-                .title("New Note"));
+                .title("New Note")
+                .icon(markerImg));
+
+        googleMap.setMinZoomPreference(15);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+
         }
 
     ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
@@ -166,6 +158,7 @@ public class CreateNoteActivity extends AppCompatActivity
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            unbindService(memoryAppServiceConnection);
             mBound = false;
         }
     };
@@ -185,12 +178,10 @@ public class CreateNoteActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         //save shared preferences
-        unbindService(memoryAppServiceConnection);
         unregisterReceiver(br);
         mBound = false;
         super.onDestroy();
     }
-
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
