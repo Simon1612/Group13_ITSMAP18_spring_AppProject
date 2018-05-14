@@ -19,16 +19,18 @@ public class NoteDataModel implements Serializable{
     }
 
     @JsonCreator
-    public NoteDataModel(@JsonProperty("name") String _name,
-                         @JsonProperty("description") String _noteDescription,
-                         @JsonProperty("location") locationObject _location,
-                         @JsonProperty("timeStamp") String _timeStamp) {
+    public NoteDataModel(@JsonProperty("Name") String _name,
+                         @JsonProperty("Description") String _noteDescription,
+                         @JsonProperty("Latitude") double _latitude,
+                         @JsonProperty("Longitude") double _longitude,
+                         @JsonProperty("Timestamp") String _timeStamp) {
 
         TimeStamp = _timeStamp;
         Name = _name;
         Description = _noteDescription;
-        Location = new LatLng(_location.getLatitude(), _location.getLongitude());
+        Location = new LatLng(_latitude, _longitude);
     }
+
 
     private String Name;
     public void setName(String name) { Name = name; }

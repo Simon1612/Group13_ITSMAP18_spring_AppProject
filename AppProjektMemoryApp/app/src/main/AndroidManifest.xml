@@ -26,7 +26,7 @@
             android:value="@string/googleMapsApiKey" />
 
         <activity android:name=".LogIn.SignUpScreen" />
-        <activity android:name=".LogIn.ProfileScreen" />
+        <activity android:name=".LogIn.ProfileScreen" android:launchMode="singleTask"/>
         <activity android:name=".LogIn.ResetPasswordScreen" />
         <activity android:name=".LogIn.LogInScreen">
             <intent-filter>
@@ -35,12 +35,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.MainActivity">
-        </activity>
-        <activity android:name=".Activities.EditNotesActivity" />
-        <activity android:name=".Activities.MapActivity" />
-        <activity android:name=".Activities.ViewNotesActivity" />
-        <activity android:name=".Activities.CreateNoteActivity" />
+        <activity android:name=".Activities.MainActivity" android:launchMode="singleTask"/>
+        <activity android:name=".Activities.EditNotesActivity" android:launchMode="singleTask"/>
+        <activity android:name=".Activities.MapActivity" android:launchMode="singleTask"/>
+        <activity android:name=".Activities.ViewNotesActivity" android:launchMode="singleTask"/>
+        <activity android:name=".Activities.CreateNoteActivity" android:launchMode="singleTask"/>
 
         <service
             android:name=".MemoryAppService"

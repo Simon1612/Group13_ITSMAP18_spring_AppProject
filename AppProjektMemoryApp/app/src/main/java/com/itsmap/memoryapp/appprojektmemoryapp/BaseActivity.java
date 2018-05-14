@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MapActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.ViewNotesActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.LogIn.ProfileScreen;
@@ -50,8 +52,15 @@ public class BaseActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId())
                 {
+                    case R.id.HomeItem:
+                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(homeIntent);
+                        break;
+
                     case R.id.NotesItem:
                         Intent notesIntent = new Intent(getApplicationContext(), ViewNotesActivity.class);
+                        notesIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(notesIntent);
                         break;
 
@@ -62,11 +71,13 @@ public class BaseActivity extends AppCompatActivity {
 
                     case R.id.ProfileItem:
                         Intent profileIntent = new Intent(getApplicationContext(), ProfileScreen.class);
+                        profileIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(profileIntent);
                         break;
 
                     case R.id.MapItem:
                         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mapIntent);
                         break;
                 }
