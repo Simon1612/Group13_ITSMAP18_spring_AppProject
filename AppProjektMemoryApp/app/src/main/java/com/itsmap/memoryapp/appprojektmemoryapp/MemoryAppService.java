@@ -284,52 +284,20 @@ public class MemoryAppService extends Service {
         int hasPermission = checkSelfPermission("android.permission.ACCESS_FINE_LOCATION");
         if(hasPermission == 0) {
             mFusedLocationClient.getLastLocation()
-                .addOnCompleteListener(new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        currentLocation = new LatLng(task.getResult().getLatitude(), task.getResult().getLongitude());
-                        sendBroadcast(locationReadyIntent);
-                    }
-                }
-
-            }).addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        sendBroadcast(locationReadyIntent);
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    stopLocationUpdates();
-                    e.printStackTrace();
-                }
-            });
+                    .addOnCompleteListener(new OnCompleteListener<Location>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Location> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                currentLocation = new LatLng(task.getResult().getLatitude(), task.getResult().getLongitude());
+                                sendBroadcast(locationReadyIntent);
+                            }
+                        }
+                    });
         }
         else {
             currentLocation = null;
             Toast.makeText(this, "You need to allow location-services", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    //Inspiration fra: https://stackoverflow.com/questions/43820981/android-google-map-api-getlastlocation-always-return-null
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-    }
-
-    @SuppressLint("MissingPermission")
-    protected void startLocationUpdate() {
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest, pendingIntent);
-    }
-
-    protected void stopLocationUpdates() {
-        mFusedLocationClient.removeLocationUpdates(pendingIntent);
     }
 
     //Inspiration from: https://developer.android.com/guide/components/broadcasts.html
