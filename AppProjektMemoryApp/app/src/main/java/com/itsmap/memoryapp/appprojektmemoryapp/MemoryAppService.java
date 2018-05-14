@@ -95,12 +95,6 @@ public class MemoryAppService extends Service {
         myNotes = new ArrayList<NoteDataModel>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        //currentLocation = new LatLng(56.162939, 10.203921);
-        int hasPermission = checkSelfPermission("android.permission.ACCESS_FINE_LOCATION");
-        if(hasPermission == 0) {
-            createLocationRequest();
-            startLocationUpdate();
-        }
         //Set broadcast receiver
     /*    IntentFilter filter = new IntentFilter();
         filter.addAction(currentLocationReady);
@@ -281,7 +275,7 @@ public class MemoryAppService extends Service {
     }
 
     public void getLocation() {
-        int hasPermission = checkSelfPermission("android.permission.ACCESS_FINE_LOCATION");
+        int hasPermission = checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION");
         if(hasPermission == 0) {
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(new OnCompleteListener<Location>() {
