@@ -48,7 +48,8 @@ public class NoteDataModel implements Serializable{
     public void setLocation(Location location) { Location = location; }
     public Location getLocation() { return Location; }*/
 
-    private LatLng Location;
+
+    private transient LatLng Location;
     public void setLocation(LatLng location) { Location = location; }
     public LatLng getLocation() { return Location; }
 }
