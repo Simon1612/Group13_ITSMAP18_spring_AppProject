@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -46,6 +47,7 @@ import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -124,6 +126,7 @@ public class MemoryAppService extends Service {
 
         getLocation();
         lastNotes = myNotes = updateLastNotes(4, notesReadyIntent);
+        updateMyNotes(10); // Gets another 6 notes
 
         sendBroadcast(locationReadyIntent);
         sendBroadcast(notesReadyIntent);
@@ -235,6 +238,51 @@ public class MemoryAppService extends Service {
         return tmpList;
     }
 
+
+
+    public void deleteNote(final NoteDataModel noteToDelete){
+        userRef.collection("Notes").document(noteToDelete.getName())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Iterator<NoteDataModel> myNotesIter = myNotes.iterator();
+
+                        while(myNotesIter.hasNext()){
+                            NoteDataModel note = myNotesIter.next();
+
+                            if(note.getName().equals(noteToDelete.getName())){
+                                myNotesIter.remove();
+                            }
+                        }
+
+                        updateLastNotes(4, notesReadyIntent);
+/*                        Iterator<NoteDataModel> lastNotesIter = lastNotes.iterator();
+
+                        while(lastNotesIter.hasNext()){
+                            NoteDataModel note = lastNotesIter.next();
+
+                            if(note.getName().equals(noteToDelete.getName())){
+                                lastNotesIter.remove();
+                            }
+                        }*/
+
+                        Log.d(TAG, "Successfully  deleted note");
+                           for(NoteDataModel note : myNotes){
+                               if(note.getName().equals(noteToDelete.getName())){
+                                   myNotes.remove(note);
+                            }
+                        }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Failed to delete note");
+                        e.printStackTrace();
+                    }
+                });
+    }
 
     public void updateMyNotes(int limit){
 

@@ -4,8 +4,8 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.itsmap.memoryapp.appprojektmemoryapp"
-        minSdkVersion 27
-        targetSdkVersion 27
+        minSdkVersion 26
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -42,6 +42,7 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
     implementation 'com.github.orangegangsters:swipy:1.2.3@aar'
+    implementation 'com.baoyz.swipemenulistview:library:1.3.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -222,6 +222,7 @@ public class MainActivity extends BaseActivity {
         }
     };
 
+
     private BroadcastReceiver locationBR = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
