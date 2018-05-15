@@ -33,10 +33,9 @@ public class MainActivity extends BaseActivity {
 
     MemoryAppService service;
     MemoryAppService.LocalBinder binder;
-    Button createQuicknoteButton, createNoteButton, editNoteButton;
+    Button createQuicknoteButton;
     ListView homescreenNotesListView;
     EditText quicknoteEdit;
-    CheckBox remindMeLaterCheckbox;
     List<NoteDataModel> recentNotesList;
     Intent serviceIntent;
     String currentLocationReady, notesReady, textSnip, quicknoteText;
@@ -74,7 +73,6 @@ public class MainActivity extends BaseActivity {
         createQuicknoteButton = findViewById(R.id.createQuicknoteButton);
         homescreenNotesListView = findViewById(R.id.homescreenNotesList);
         quicknoteEdit = findViewById(R.id.quicknoteEdit);
-        remindMeLaterCheckbox = findViewById(R.id.remindMeLaterCheckbox);
 
         recentNotesList = new ArrayList<NoteDataModel>();
         serviceIntent = new Intent(this, MemoryAppService.class);
@@ -128,23 +126,6 @@ public class MainActivity extends BaseActivity {
                 quicknoteEdit.getText().clear();
             }
 
-        });
-        createNoteButton = findViewById(R.id.createNewNoteButton);
-        createNoteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent newNoteIntent = new Intent(MainActivity.this, CreateNoteActivity.class);
-                startActivity(newNoteIntent);
-            }
-        });
-
-        editNoteButton = findViewById(R.id.EditNote);
-        editNoteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent editNoteIntent = new Intent(MainActivity.this, EditNotesActivity.class);
-                startActivity(editNoteIntent);
-            }
         });
     }
 
@@ -259,11 +240,6 @@ public class MainActivity extends BaseActivity {
         unbindService(myServiceConnection);
         unregisterReceiver(locationBR);
         unregisterReceiver(notesBR);
-
-        /*SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("myCityPersisted", cityView.getText().toString());
-        editor.commit();*/ //HVIS VI SKAL GEMME NOGET SHIT
     }
 
     @Override

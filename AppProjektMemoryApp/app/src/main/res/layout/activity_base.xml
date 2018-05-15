@@ -23,7 +23,7 @@
                 android:id="@+id/toolbarBase"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimaryDark"
+                android:background="@color/darkSlateGrey"
                 android:visibility="visible" />
 
         </android.support.design.widget.AppBarLayout>
