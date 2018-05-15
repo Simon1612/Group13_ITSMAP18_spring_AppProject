@@ -22,9 +22,14 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbarBase"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="56dp"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:background="@color/darkSlateGrey"
-                android:visibility="visible" />
+                android:foregroundGravity="center_vertical|center_horizontal"
+                android:gravity="center_vertical|center_horizontal"
+                android:paddingTop="16dp"
+                android:visibility="visible"
+                app:buttonGravity="bottom" />
 
         </android.support.design.widget.AppBarLayout>
     </android.support.constraint.ConstraintLayout>

@@ -47,7 +47,7 @@
     <string name="notesReady">NOTES_READY</string>
     <string name="myNotesReady">MY_NOTES_READY</string>
     <string name="notificationTitle">Memory Service</string>
-    <string name="notificationText">Friendly reminder that you have daily notes.</string>
+    <string name="notificationText">Your note has been saved.</string>
     <string name="firstNoteName">First Note</string>
     <string name="firstNoteDescription">Your very first note!</string>
     <string name="firstNoteLocation">"Heaven!"</string>

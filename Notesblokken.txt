@@ -8,6 +8,7 @@ Overall:
 -	Persistance mellem landscape/portrait
 -	Icon
 -	Farver
+- 	Notifikationer
 notesListAdapter:
 -	Items skal videresende til editNoteActivity.
 -	Fix listItemView så location/date star ordentligt.
