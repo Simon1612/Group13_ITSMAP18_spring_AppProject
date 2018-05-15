@@ -73,4 +73,7 @@
 
     <string name="googleMapsApiKey">AIzaSyCWkDTUPbsjbFlETjI8kBpbjOyhNbRjDq0</string>
     <string name="CreateNoteBtnTxt">Create New Note</string>
+    <string name="ExpandMapTxt">Expand Map</string>
+    <string name="DeleteBtnTxt">Delete Note</string>
+    <string name="ReturnBtnTxt">Return</string>
 </resources>

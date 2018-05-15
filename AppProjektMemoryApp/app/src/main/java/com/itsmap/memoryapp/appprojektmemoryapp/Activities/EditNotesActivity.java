@@ -9,12 +9,14 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -39,15 +41,17 @@ import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EditNotesActivity extends AppCompatActivity
 implements OnMapReadyCallback {
 
+    final static int SET_MARKER_REQUEST = 234;
     final static int CAMERA_REQUEST = 167;
     NoteDataModel noteData;
-    Button editPictureBtn, OkBtn, CancelBtn;
+    Button editPictureBtn, OkBtn, CancelBtn, ExpandMapBtn;
     EditText NoteDescriptionText, NoteNameText;
     ImageView NotePictureImageView;
 
@@ -56,6 +60,8 @@ implements OnMapReadyCallback {
     MemoryAppService memoryAppService;
     Boolean mBound = false;
 
+    LatLng location;
+    String oldNoteName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,23 +73,14 @@ implements OnMapReadyCallback {
 
         Intent intent = getIntent();
         noteData = (NoteDataModel) intent.getSerializableExtra("noteData");
+        noteData.setLocation(new LatLng(intent.getDoubleExtra("LocationLat", 0), intent.getDoubleExtra("LocationLong", 0)));
         //For test
         if(noteData == null) {
-            noteData = new NoteDataModel("Invalid Note", "", 0, 0);
+            noteData = new NoteDataModel("Invalid Note", "", 0, 0,"");
         }
-        try{
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            if(noteData.getLocation() != null) {
-                mapFragment.getMapAsync(EditNotesActivity.this);
-            } else {
-                noteData.setLocation(new LatLng(0,0));
-                mapFragment.getMapAsync(EditNotesActivity.this);
-            }
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+
+        oldNoteName = noteData.getName();
+        location = noteData.getLocation();
 
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
         NoteDescriptionText.setText(noteData.getDescription());
@@ -92,8 +89,20 @@ implements OnMapReadyCallback {
         NoteNameText.setText(noteData.getName());
 
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
+        String imageBitmap = noteData.getImageBitmap();
+        if(imageBitmap != null) {
+            if(!imageBitmap.isEmpty()) {
+                byte[] decodedString = Base64.decode(noteData.getImageBitmap().getBytes(), Base64.DEFAULT);
+                Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                NotePictureImageView.setImageBitmap(decodedImg);
+            }
+        }
 
         editPictureBtn = findViewById(R.id.ChangePictureBtn);
+        OkBtn = findViewById(R.id.OkBtn);
+        CancelBtn = findViewById(R.id.CancelBtn);
+        ExpandMapBtn = findViewById(R.id.ExpandMapBtn);
+
         editPictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,14 +111,9 @@ implements OnMapReadyCallback {
             }
         });
 
-
-        OkBtn = findViewById(R.id.OkBtn);
-        CancelBtn = findViewById(R.id.CancelBtn);
-
         OkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String name = NoteNameText.getText().toString();
                 if(name != "") {
                     noteData.setName(name);
@@ -121,7 +125,7 @@ implements OnMapReadyCallback {
                 String noteDescription = NoteDescriptionText.getText().toString();
                 noteData.setDescription(noteDescription);
 
-               memoryAppService.SaveNote(noteData);
+                memoryAppService.UpdateNote(noteData, oldNoteName);
 
                 Intent mainActivityIntent = new Intent(EditNotesActivity.this, MainActivity.class);
                 EditNotesActivity.this.startActivity(mainActivityIntent);
@@ -134,6 +138,18 @@ implements OnMapReadyCallback {
                 finish();
             }
         });
+
+        ExpandMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapActivityIntent = new Intent(EditNotesActivity.this, MapActivity.class);
+                if(location != null) {
+                    mapActivityIntent.putExtra("LocationLat", location.latitude);
+                    mapActivityIntent.putExtra("LocationLong", location.longitude);
+                }
+                startActivityForResult(mapActivityIntent, SET_MARKER_REQUEST);
+            }
+        });
     }
 
     ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
@@ -142,6 +158,22 @@ implements OnMapReadyCallback {
             binder = (MemoryAppService.LocalBinder) service;
             memoryAppService = binder.getService();
             mBound = true;
+
+            try{
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
+                if(location != null) {
+                    mapFragment.getMapAsync(EditNotesActivity.this);
+                } else {
+                    noteData.setLocation(new LatLng(0,0));
+                    mapFragment.getMapAsync(EditNotesActivity.this);
+                }
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+
+            memoryAppService.startService(serviceIntent);
         }
 
         @Override
@@ -160,19 +192,23 @@ implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        BitmapDescriptor markerImg = BitmapDescriptorFactory.fromResource(R.drawable.note_image);
-        LatLng currentLocation = new LatLng(noteData.getLocation().latitude, noteData.getLocation().longitude);
-        googleMap.addMarker(new MarkerOptions().position(currentLocation)
-                .title("New Note")
-                .icon(markerImg));
+        LatLng markerLocation = location;
+        googleMap.addMarker(new MarkerOptions().position(markerLocation)
+                .title("New Note"));
         googleMap.setMinZoomPreference(15);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(markerLocation));
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             NotePictureImageView.setImageBitmap(photo);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            noteData.setImageBitmap(encoded);
         }
     }
 

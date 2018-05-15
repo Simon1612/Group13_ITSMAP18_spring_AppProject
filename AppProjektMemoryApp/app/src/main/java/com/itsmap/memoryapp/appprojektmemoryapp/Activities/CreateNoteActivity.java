@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,20 +43,22 @@ import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CreateNoteActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
+    final static int SET_MARKER_REQUEST = 234;
     final static int CAMERA_REQUEST = 167;
-    private LatLng location;
+    LatLng location;
     String currentLocationReady;
 
     MemoryAppService.LocalBinder binder;
     Intent serviceIntent;
     MemoryAppService memoryAppService;
-    Button OkBtn, CancelBtn, TakePictureBtn;
+    Button OkBtn, CancelBtn, TakePictureBtn, ExpandMapBtn;
     TextView TimeStampTextView;
     EditText NoteDescriptionText, NameText;
     ImageView NotePictureImageView;
@@ -75,11 +78,13 @@ public class CreateNoteActivity extends AppCompatActivity
         bindService(serviceIntent, memoryAppServiceConnection, Context.BIND_AUTO_CREATE);
         IntentFilter filter = new IntentFilter();
         filter.addAction(currentLocationReady);
+
         this.registerReceiver(br, filter);
-        startService(serviceIntent);
-
-        noteData = new NoteDataModel("", "", 0, 0);
-
+        if(location != null) {
+            noteData = new NoteDataModel("", "", location.latitude, location.longitude, "");
+        } else {
+            noteData = new NoteDataModel("", "", 0, 0,"");
+        }
         TimeStampTextView = findViewById(R.id.TimeStampTextView);
         TimeStampTextView.setText(noteData.getTimeStamp().toString());
 
@@ -90,6 +95,7 @@ public class CreateNoteActivity extends AppCompatActivity
         OkBtn = findViewById(R.id.OkBtn);
         CancelBtn = findViewById(R.id.CancelBtn);
         TakePictureBtn = findViewById(R.id.TakePictureBtn);
+        ExpandMapBtn = findViewById(R.id.ExpandMapBtn);
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,18 +127,28 @@ public class CreateNoteActivity extends AppCompatActivity
                     startActivityForResult(pictureIntent, CAMERA_REQUEST);
             }
         });
+
+        ExpandMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapActivityIntent = new Intent(CreateNoteActivity.this, MapActivity.class);
+                        if(location != null) {
+                            mapActivityIntent.putExtra("LocationLat", location.latitude);
+                            mapActivityIntent.putExtra("LocationLong", location.longitude);
+                        }
+                startActivityForResult(mapActivityIntent, SET_MARKER_REQUEST);
+            }
+        });
     }
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        BitmapDescriptor markerImg = BitmapDescriptorFactory.fromResource(R.drawable.note_image);
-        LatLng currentLocation = new LatLng(location.latitude, location.longitude);
-        googleMap.addMarker(new MarkerOptions().position(currentLocation)
-                .title("New Note")
-                .icon(markerImg));
+        LatLng markerLocation = new LatLng(location.latitude, location.longitude);
+        googleMap.addMarker(new MarkerOptions().position(markerLocation)
+                .title("New Note"));
 
         googleMap.setMinZoomPreference(15);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(markerLocation));
 
         }
 
@@ -154,6 +170,8 @@ public class CreateNoteActivity extends AppCompatActivity
             catch(Exception e){
                 e.printStackTrace();
             }
+
+            memoryAppService.startService(serviceIntent);
         }
 
         @Override
@@ -178,6 +196,7 @@ public class CreateNoteActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         //save shared preferences
+        unbindService(memoryAppServiceConnection);
         unregisterReceiver(br);
         mBound = false;
         super.onDestroy();
@@ -188,6 +207,12 @@ public class CreateNoteActivity extends AppCompatActivity
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = data.getParcelableExtra("data");
             NotePictureImageView.setImageBitmap(photo);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            noteData.setImageBitmap(encoded);
         }
     }
 
