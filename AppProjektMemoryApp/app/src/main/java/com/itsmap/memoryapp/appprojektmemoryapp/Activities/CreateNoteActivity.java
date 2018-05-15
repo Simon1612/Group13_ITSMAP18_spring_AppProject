@@ -48,6 +48,7 @@ import java.util.Map;
 public class CreateNoteActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
+    final static int SET_MARKER_REQUEST = 234;
     final static int CAMERA_REQUEST = 167;
     private LatLng location;
     String currentLocationReady;
@@ -55,7 +56,7 @@ public class CreateNoteActivity extends AppCompatActivity
     MemoryAppService.LocalBinder binder;
     Intent serviceIntent;
     MemoryAppService memoryAppService;
-    Button OkBtn, CancelBtn, TakePictureBtn;
+    Button OkBtn, CancelBtn, TakePictureBtn, ExpandMapBtn;
     TextView TimeStampTextView;
     EditText NoteDescriptionText, NameText;
     ImageView NotePictureImageView;
@@ -90,6 +91,7 @@ public class CreateNoteActivity extends AppCompatActivity
         OkBtn = findViewById(R.id.OkBtn);
         CancelBtn = findViewById(R.id.CancelBtn);
         TakePictureBtn = findViewById(R.id.TakePictureBtn);
+        ExpandMapBtn = findViewById(R.id.ExpandMapBtn);
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +121,15 @@ public class CreateNoteActivity extends AppCompatActivity
             public void onClick(View v) {
                     Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(pictureIntent, CAMERA_REQUEST);
+            }
+        });
+
+        ExpandMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapActivityIntent = new Intent(CreateNoteActivity.this, MapActivity.class).putExtra("LocationLat", location.latitude)
+                        .putExtra("LocationLong", location.longitude);
+                startActivityForResult(mapActivityIntent, SET_MARKER_REQUEST);
             }
         });
     }

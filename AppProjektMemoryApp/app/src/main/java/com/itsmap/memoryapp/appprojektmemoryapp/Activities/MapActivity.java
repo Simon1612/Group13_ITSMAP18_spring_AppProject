@@ -1,5 +1,7 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
+import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,8 @@ import com.itsmap.memoryapp.appprojektmemoryapp.R;
 //Inspireret af https://developers.google.com/maps/documentation/android-sdk/map-with-marker
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback {
+
+    final static int SET_MARKER_REQUEST = 234;
 
     FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
         @Override
@@ -76,9 +80,13 @@ public class MapActivity extends AppCompatActivity
                     }
                 }
             });*/
-
-            //TODO: Hvis vi ønsker at mappet skal starte met at zoome ind på brugerens nuværende lcoation, skal MapActivity have adgang til service'en.
-            //LatLng latestLocation = new LatLng(memoryAppService.getLocation().getLatitude(), memoryAppService.getLocation().getLongtitude());
-            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(latestLocation));
         }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SET_MARKER_REQUEST) {
+           LatLng location = new LatLng(getIntent().getExtras().getDouble("LocationLat"), getIntent().getExtras().getDouble("LocationLong"));
+        }
+    }
 }
