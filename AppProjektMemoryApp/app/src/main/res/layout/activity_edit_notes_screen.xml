@@ -52,9 +52,10 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.24"
+        app:layout_constraintVertical_bias="0.234"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
     <EditText
@@ -80,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="56dp"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="268dp"
         android:layout_marginTop="8dp"
         android:text="@string/CancelBtnText"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,7 +93,7 @@
         android:id="@+id/OkBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="68dp"
+        android:layout_marginEnd="268dp"
         android:text="@string/OkBtnText"
         app:layout_constraintBaseline_toBaselineOf="@+id/CancelBtn"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -129,5 +130,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.1" />
+
+    <Button
+        android:id="@+id/ExpandMapBtn"
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        android:text="@string/ExpandMapTxt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.167"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.158" />
 
 </android.support.constraint.ConstraintLayout>

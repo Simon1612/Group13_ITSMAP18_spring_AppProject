@@ -56,17 +56,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_home_screen);
 
         checkForPermissions();
-        if(locationPermission != true) {
-            Toast.makeText(MainActivity.this, getResources().getString(R.string.LocationPermissionsEncourage), Toast.LENGTH_SHORT).show();
-        }
-
-        if(cameraPermission != true) {
-            Toast.makeText(MainActivity.this, getResources().getString(R.string.CameraPermissionsEncourage), Toast.LENGTH_SHORT).show();
-        }
-
-        if(storageReadPermission && storageWritePermission != true) {
-            Toast.makeText(MainActivity.this, getResources().getString(R.string.StoragePermissionsEncourage), Toast.LENGTH_SHORT).show();
-        }
 
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
         notesReady = getResources().getString(R.string.notesReady);
@@ -113,7 +102,7 @@ public class MainActivity extends BaseActivity {
                 tempNote = new NoteDataModel(
                     "Quicknote: " + textSnip,
                     quicknoteText,
-                    location.latitude, location.longitude);
+                    location.latitude, location.longitude, "");
 
                 try{
                     recentNotesList.add(tempNote);

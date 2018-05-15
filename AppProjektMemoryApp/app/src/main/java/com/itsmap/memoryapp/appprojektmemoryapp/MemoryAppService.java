@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -94,11 +95,6 @@ public class MemoryAppService extends Service {
         lastNotes = new ArrayList<NoteDataModel>();
         myNotes = new ArrayList<NoteDataModel>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        //Set broadcast receiver
-    /*    IntentFilter filter = new IntentFilter();
-        filter.addAction(currentLocationReady);
-        this.registerReceiver(br, filter);*/
     }
 
     @Override
@@ -151,8 +147,10 @@ public class MemoryAppService extends Service {
                         .setContentIntent(pendingIntent)
                         .setWhen(System.currentTimeMillis());
 
-        nChannel = new NotificationChannel("1337", getResources().getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
-        nManager.createNotificationChannel(nChannel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nChannel = new NotificationChannel("1337", getResources().getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
+            nManager.createNotificationChannel(nChannel);
+        }
         notification.setChannelId("1337");
 
         //Start service as foreground
@@ -168,7 +166,7 @@ public class MemoryAppService extends Service {
                     if (!document.exists()) {
                         CollectionReference colRef = database.collection("Users");
                         //TODO: Check if collection is empty to avoid multiple first notes!
-                        SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0));
+                        SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0, ""));
                /*         colRef.document(currentUser.getEmail())
                                 .collection("Notes")
                                 .document(getResources().getString(R.string.firstNoteName))
@@ -181,7 +179,6 @@ public class MemoryAppService extends Service {
         });
     }
 
-
     public void SaveNote(final NoteDataModel note){
 
         Thread t = new Thread(new Runnable() {
@@ -191,12 +188,34 @@ public class MemoryAppService extends Service {
                 map.put("Name", note.getName());
                 map.put("Timestamp", note.getTimeStamp());
                 map.put("Description", note.getDescription());
+                map.put("ImageBitmap", note.getImageBitmap());
                 map.put("Latitude", note.getLocation().latitude);
                 map.put("Longitude", note.getLocation().longitude);
 
                 userRef.collection("Notes")
                         .document(note.getName())
                         .set(map);
+            }
+        });
+
+        t.start();
+    }
+
+    public void UpdateNote(final NoteDataModel note, final String oldNoteName) {
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("Name", note.getName());
+                map.put("Timestamp", note.getTimeStamp());
+                map.put("Description", note.getDescription());
+                map.put("ImageBitmap", note.getImageBitmap());
+                map.put("Latitude", note.getLocation().latitude);
+                map.put("Longitude", note.getLocation().longitude);
+
+                userRef.collection("Notes").document(oldNoteName).delete();
+                userRef.collection("Notes").document(note.getName()).set(map);
             }
         });
 

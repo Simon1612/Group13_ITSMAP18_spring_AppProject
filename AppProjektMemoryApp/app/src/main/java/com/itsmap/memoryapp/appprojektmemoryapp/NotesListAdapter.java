@@ -57,7 +57,9 @@ public class NotesListAdapter extends ArrayAdapter<NoteDataModel> implements Ada
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         editNoteIntent = new Intent(context, EditNotesActivity.class)
-                .putExtra("noteData", getItem(i));
+                .putExtra("noteData", getItem(i))
+                .putExtra("LocationLat", getItem(i).getLocation().latitude)
+                .putExtra("LocationLong", getItem(i).getLocation().longitude);
 
         context.startActivity(editNoteIntent);
     }

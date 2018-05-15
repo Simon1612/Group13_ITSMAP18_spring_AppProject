@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +31,9 @@ public class MapActivity extends AppCompatActivity
 
     final static int SET_MARKER_REQUEST = 234;
 
+    Button returnBtn;
+    private LatLng location = null;
+
     FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,14 @@ public class MapActivity extends AppCompatActivity
                     .findFragmentById(R.id.map);
 
             mapFragment.getMapAsync(this);
+
+            returnBtn = findViewById(R.id.returnBtn);
+            returnBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
         }
 
         /**
@@ -54,39 +67,30 @@ public class MapActivity extends AppCompatActivity
         @Override
         public void onMapReady(final GoogleMap googleMap) {
 
-            BitmapDescriptor markerImg = BitmapDescriptorFactory.fromResource(R.drawable.note_image);
-            LatLng aarhus = new LatLng(56.162939, 10.203921);
-            googleMap.addMarker(new MarkerOptions().position(aarhus)
-                    .title("Marker in Aarhus")
-                    .icon(markerImg));
             googleMap.setMinZoomPreference(10);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(aarhus));
-           /* firebaseDb.collection("Notes").whereEqualTo("Creator", FirebaseAuth.getInstance().getCurrentUser())
+            location = new LatLng((Double) getIntent().getExtras().get("LocationLat"),(Double) getIntent().getExtras().get("LocationLong"));
+
+            if(location != null){
+                googleMap.addMarker(new MarkerOptions().position(location));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+            }
+            firebaseDb.collection("Notes")
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()) {
                         for (DocumentSnapshot doc : task.getResult()){
-                            Double Latitude = Double.valueOf(doc.getData().get("Latitude").toString());
-                            Double Longtitude = Double.valueOf(doc.getData().get("Longtitude").toString());
-                            String Name = doc.getData().get("Name").toString();
+                            location = new LatLng((Double) doc.getData().get("Latitude"), (Double) doc.getData().get("Longtitude"));
 
-                            LatLng noteLocation = new LatLng(Latitude, Longtitude);
-                            googleMap.addMarker(new MarkerOptions().position(noteLocation).title(Name));
+                            String Name = doc.getData().get("Name").toString();
+                            BitmapDescriptor markerImg = BitmapDescriptorFactory.fromResource(R.drawable.note_image);
+                            googleMap.addMarker(new MarkerOptions().position(location).title(Name).icon(markerImg));
                         }
                     }
                     else {
                         Log.w("DbRead", "Error reading notes from db");
                     }
                 }
-            });*/
+            });
         }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == SET_MARKER_REQUEST) {
-           LatLng location = new LatLng(getIntent().getExtras().getDouble("LocationLat"), getIntent().getExtras().getDouble("LocationLong"));
-        }
-    }
 }
