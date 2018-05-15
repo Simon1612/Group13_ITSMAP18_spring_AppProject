@@ -146,8 +146,8 @@ public class MemoryAppService extends Service {
         notification =
                 new NotificationCompat.Builder(this, getResources().getString(R.string.app_name))
                         .setContentTitle(getResources().getString(R.string.notificationTitle))
-                        .setContentText(getResources().getString(R.string.notificationText) + "\n" + DateFormat.getInstance().format(System.currentTimeMillis()))
-                        //.setSmallIcon(R.drawable.ic_stat_service) //TODO: VI SKAL HA ET ICON IK
+                        //.setContentText(getResources().getString(R.string.notificationText) + "\n" + DateFormat.getInstance().format(System.currentTimeMillis()))
+                        .setSmallIcon(R.drawable.note_image)
                         .setContentIntent(pendingIntent)
                         .setWhen(System.currentTimeMillis());
 
@@ -167,12 +167,12 @@ public class MemoryAppService extends Service {
                     DocumentSnapshot document = task.getResult();
                     if (!document.exists()) {
                         CollectionReference colRef = database.collection("Users");
-                        //TODO: Check if collection is empty to avoid multiple first notes!
-                        SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0));
-               /*         colRef.document(currentUser.getEmail())
+                        DocumentReference docRef = colRef.document(currentUser.getEmail())
                                 .collection("Notes")
-                                .document(getResources().getString(R.string.firstNoteName))
-                                .set(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0));*/
+                                .document(getResources().getString(R.string.firstNoteName));
+
+                        if(docRef == null)
+                            SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0));
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -197,6 +197,13 @@ public class MemoryAppService extends Service {
                 userRef.collection("Notes")
                         .document(note.getName())
                         .set(map);
+
+                //Update Notification
+                synchronized (notification){
+                    notification.setContentText(getResources().getString(R.string.notificationText) + " " + DateFormat.getInstance().format(System.currentTimeMillis()))
+                            .setWhen(System.currentTimeMillis());
+                    nManager.notify(1337, notification.build());
+                }
             }
         });
 
