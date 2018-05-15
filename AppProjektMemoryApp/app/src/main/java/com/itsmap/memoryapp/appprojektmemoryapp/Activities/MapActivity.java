@@ -29,8 +29,6 @@ import com.itsmap.memoryapp.appprojektmemoryapp.R;
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
-    final static int SET_MARKER_REQUEST = 234;
-
     Button returnBtn;
     private LatLng location = null;
 
@@ -68,8 +66,9 @@ public class MapActivity extends AppCompatActivity
         public void onMapReady(final GoogleMap googleMap) {
 
             googleMap.setMinZoomPreference(10);
-            location = new LatLng((Double) getIntent().getExtras().get("LocationLat"),(Double) getIntent().getExtras().get("LocationLong"));
-
+            if(getIntent().getExtras() != null) {
+                location = new LatLng((Double) getIntent().getExtras().get("LocationLat"), (Double) getIntent().getExtras().get("LocationLong"));
+            }
             if(location != null){
                 googleMap.addMarker(new MarkerOptions().position(location));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));

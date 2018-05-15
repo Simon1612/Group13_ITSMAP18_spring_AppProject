@@ -170,7 +170,7 @@ public class MemoryAppService extends Service {
                                 .document(getResources().getString(R.string.firstNoteName));
 
                         if(docRef == null)
-                            SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0));
+                            SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0, ""));
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());

@@ -89,10 +89,13 @@ implements OnMapReadyCallback {
         NoteNameText.setText(noteData.getName());
 
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
-        if(noteData.getImageBitmap() != "") {
-            byte[] decodedString = Base64.decode(noteData.getImageBitmap().getBytes(), Base64.DEFAULT);
-            Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            NotePictureImageView.setImageBitmap(decodedImg);
+        String imageBitmap = noteData.getImageBitmap();
+        if(imageBitmap != null) {
+            if(!imageBitmap.isEmpty()) {
+                byte[] decodedString = Base64.decode(noteData.getImageBitmap().getBytes(), Base64.DEFAULT);
+                Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                NotePictureImageView.setImageBitmap(decodedImg);
+            }
         }
 
         editPictureBtn = findViewById(R.id.ChangePictureBtn);
