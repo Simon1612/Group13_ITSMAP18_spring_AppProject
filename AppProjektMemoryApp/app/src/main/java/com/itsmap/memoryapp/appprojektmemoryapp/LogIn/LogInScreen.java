@@ -31,7 +31,7 @@ public class LogInScreen extends AppCompatActivity {
 
     final static int PERMISSIONS_REQUEST = 154;
     boolean locationPermission = false;
-    boolean cameraPermission = false;
+    //boolean cameraPermission = false;
     boolean storageReadPermission = false;
     boolean storageWritePermission = false;
 
@@ -45,7 +45,10 @@ public class LogInScreen extends AppCompatActivity {
         checkForPermissions();
 
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LogInScreen.this, MainActivity.class));
+            startActivity(new Intent(LogInScreen.this, MainActivity.class)
+                                    .putExtra("locationPermission", locationPermission)
+                                    .putExtra("storageReadPermission", storageReadPermission)
+                                    .putExtra("storageWritePermission", storageWritePermission));
             finish();
         }
 
@@ -123,19 +126,19 @@ public class LogInScreen extends AppCompatActivity {
 
     public void checkForPermissions() {
         if(ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                + ContextCompat.checkSelfPermission(LogInScreen.this, android.Manifest.permission.CAMERA)
+                //+ ContextCompat.checkSelfPermission(LogInScreen.this, android.Manifest.permission.CAMERA)
                 + ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 + ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(LogInScreen.this, new String[]{
                             Manifest.permission.ACCESS_COARSE_LOCATION,
-                            android.Manifest.permission.CAMERA,
+                            //android.Manifest.permission.CAMERA,
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             PERMISSIONS_REQUEST);
         } else {
             locationPermission = true;
-            cameraPermission = true;
+            //cameraPermission = true;
             storageReadPermission = true;
             storageWritePermission = true;
             return;
@@ -149,28 +152,8 @@ public class LogInScreen extends AppCompatActivity {
             case PERMISSIONS_REQUEST: {
                 if(grantResults.length > 0) {
                     locationPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    cameraPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     storageReadPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                     storageWritePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-
-                    if(locationPermission) {
-                        Toast.makeText(LogInScreen.this, getResources().getString(R.string.LocationPermissionsSuccess), Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(LogInScreen.this, getResources().getString(R.string.LocationPermissionsFailed), Toast.LENGTH_SHORT).show();
-                    }
-
-                    if(cameraPermission) {
-                        Toast.makeText(LogInScreen.this, getResources().getString(R.string.CameraPermissionsSuccess), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(LogInScreen.this, getResources().getString(R.string.CameraPermissionsFailed), Toast.LENGTH_SHORT).show();
-                    }
-
-                    if(storageReadPermission && storageWritePermission) {
-                        Toast.makeText(LogInScreen.this, getResources().getString(R.string.StoragePermissionsSuccess), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(LogInScreen.this, getResources().getString(R.string.StoragePermissionsSuccess), Toast.LENGTH_SHORT).show();
-                    }
                 }
                 break;
             }

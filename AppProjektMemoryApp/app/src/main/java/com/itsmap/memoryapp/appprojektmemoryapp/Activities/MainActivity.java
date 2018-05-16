@@ -1,5 +1,7 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
+import android.Manifest;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
+import com.itsmap.memoryapp.appprojektmemoryapp.LogIn.LogInScreen;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.NotesListAdapter;
@@ -25,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
+
+    final static int PERMISSIONS_REQUEST = 154;
 
     MemoryAppService service;
     MemoryAppService.LocalBinder binder;
@@ -43,6 +49,27 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+
+        boolean locationPermission =  getIntent().getExtras().getBoolean("locationPermission");
+        boolean storageReadPermission = getIntent().getExtras().getBoolean("storageReadPermission");
+        boolean storageWritePermission = getIntent().getExtras().getBoolean("storageWritePermission");
+
+        if(!locationPermission) {
+            if(!storageReadPermission || !storageWritePermission){
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_REQUEST);
+            }
+        } else if(!storageReadPermission || !storageWritePermission) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+        }
 
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
         notesReady = getResources().getString(R.string.notesReady);
@@ -173,6 +200,7 @@ public class MainActivity extends BaseActivity {
         unbindService(myServiceConnection);
         unregisterReceiver(locationBR);
         unregisterReceiver(notesBR);
+
     }
 
     @Override

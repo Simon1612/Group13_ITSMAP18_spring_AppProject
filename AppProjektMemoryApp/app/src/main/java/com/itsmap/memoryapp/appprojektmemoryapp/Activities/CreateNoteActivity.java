@@ -9,43 +9,37 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class CreateNoteActivity extends AppCompatActivity
         implements OnMapReadyCallback {
@@ -66,7 +60,6 @@ public class CreateNoteActivity extends AppCompatActivity
 
     Boolean mBound = false;
 
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,17 +73,29 @@ public class CreateNoteActivity extends AppCompatActivity
         filter.addAction(currentLocationReady);
 
         this.registerReceiver(br, filter);
+
         if(location != null) {
             noteData = new NoteDataModel("", "", location.latitude, location.longitude, "");
         } else {
-            noteData = new NoteDataModel("", "", 0, 0,"");
+            noteData = new NoteDataModel("", "", 0, 0, "");
         }
+
         TimeStampTextView = findViewById(R.id.TimeStampTextView);
         TimeStampTextView.setText(noteData.getTimeStamp().toString());
+
 
         NameText = findViewById(R.id.NoteNameText);
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
+
+        String imgBitmap = noteData.getImageBitmap();
+            if(imgBitmap != null) {
+                if(!imgBitmap.isEmpty()) {
+                    byte[] decodedString = Base64.decode(imgBitmap.getBytes(), Base64.DEFAULT);
+                    Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    NotePictureImageView.setImageBitmap(decodedImg);
+                }
+            }
 
         OkBtn = findViewById(R.id.OkBtn);
         CancelBtn = findViewById(R.id.CancelBtn);
@@ -104,13 +109,30 @@ public class CreateNoteActivity extends AppCompatActivity
             }
         });
 
-        //Baseret på FirebaseFirestore dokumentation
         OkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                noteData.setName(NameText.getText().toString());
-                noteData.setLocation(location);
-                noteData.setDescription(NoteDescriptionText.getText().toString());
+                String name = NameText.getText().toString();
+                if(!name.matches("")) {
+                    noteData.setName(name);
+                } else {
+                    Toast.makeText(CreateNoteActivity.this, getResources().getString(R.string.NoteNameErrorTxt), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(location != null) {
+                    noteData.setLocation(location);
+                } else {
+                    noteData.setLocation(new LatLng(123, 123)); //random default-værdi
+                }
+
+                String description =  NoteDescriptionText.getText().toString();
+                if(!description.matches("")) {
+                    noteData.setDescription(description);
+                } else {
+                    Toast.makeText(CreateNoteActivity.this, getResources().getString(R.string.NoteDescriptionErrorTxt), Toast.LENGTH_SHORT).show();
+                    noteData.setDescription(" ");
+                }
 
                 memoryAppService.SaveNote(noteData);
 
@@ -202,7 +224,7 @@ public class CreateNoteActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-
+    //Baseret på stackoverflow: https://stackoverflow.com/questions/36117882/is-it-possible-to-store-image-to-firebase-in-android
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = data.getParcelableExtra("data");
@@ -220,8 +242,8 @@ public class CreateNoteActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBinder("binder", binder);
-        outState.putSerializable("noteDataModel", noteData);
         outState.putParcelable("Location", location);
+        outState.putSerializable("noteDataModel", noteData);
     }
 
     @Override
@@ -229,7 +251,7 @@ public class CreateNoteActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState, persistentState);
 
         binder = (MemoryAppService.LocalBinder) savedInstanceState.getBinder("binder");
-        noteData =(NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
+        noteData = (NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
         noteData.setLocation((LatLng) savedInstanceState.getParcelable("Location"));
     }
 }
