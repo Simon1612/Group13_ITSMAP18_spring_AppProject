@@ -14,7 +14,7 @@ createNewNoteActivity:
 
 Rapport:
 -	Konklusion
-- 	MoSCoW
+- 	MoSCoW (+ UseCase diagram?)
 -	Known bugs
 
 
