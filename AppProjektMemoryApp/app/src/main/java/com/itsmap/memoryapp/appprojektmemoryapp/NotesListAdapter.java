@@ -49,7 +49,7 @@ public class NotesListAdapter extends ArrayAdapter<NoteDataModel> implements Ada
 
         noteNameView.setText(currentNoteDataModel.getName());
         noteDateView.setText(currentNoteDataModel.getTimeStamp());
-        noteLocationView.setText("Latitude: " + currentNoteDataModel.getLocation().latitude + " Longtitude: " + currentNoteDataModel.getLocation().longitude);
+        noteLocationView.setText("Latitude: " + String.format("%.3g%n", currentNoteDataModel.getLocation().latitude) + " Longtitude: " + String.format("%.3g%n", currentNoteDataModel.getLocation().longitude));
 
         return view;
     }
@@ -57,7 +57,9 @@ public class NotesListAdapter extends ArrayAdapter<NoteDataModel> implements Ada
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         editNoteIntent = new Intent(context, EditNotesActivity.class)
-                .putExtra("noteData", getItem(i));
+                .putExtra("noteData", getItem(i))
+                .putExtra("LocationLat", getItem(i).getLocation().latitude)
+                .putExtra("LocationLong", getItem(i).getLocation().longitude);
 
         context.startActivity(editNoteIntent);
     }

@@ -1,8 +1,12 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.LogIn;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -25,6 +29,12 @@ public class LogInScreen extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button btnSignup, btnLogin, btnReset;
 
+    final static int PERMISSIONS_REQUEST = 154;
+    boolean locationPermission = false;
+    //boolean cameraPermission = false;
+    boolean storageReadPermission = false;
+    boolean storageWritePermission = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,20 +42,25 @@ public class LogInScreen extends AppCompatActivity {
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
 
+        checkForPermissions();
+
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LogInScreen.this, MainActivity.class));
+            startActivity(new Intent(LogInScreen.this, MainActivity.class)
+                                    .putExtra("locationPermission", locationPermission)
+                                    .putExtra("storageReadPermission", storageReadPermission)
+                                    .putExtra("storageWritePermission", storageWritePermission));
             finish();
         }
 
         // set the view now
         setContentView(R.layout.activity_log_in_screen);
 
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        btnSignup = (Button) findViewById(R.id.btn_signup);
-        btnLogin = (Button) findViewById(R.id.btn_login);
-        btnReset = (Button) findViewById(R.id.btn_reset_password);
+        inputEmail = findViewById(R.id.email);
+        inputPassword = findViewById(R.id.password);
+        progressBar = findViewById(R.id.progressBar);
+        btnSignup = findViewById(R.id.btn_signup);
+        btnLogin = findViewById(R.id.btn_login);
+        btnReset = findViewById(R.id.btn_reset_password);
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
@@ -107,5 +122,41 @@ public class LogInScreen extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    public void checkForPermissions() {
+        if(ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                //+ ContextCompat.checkSelfPermission(LogInScreen.this, android.Manifest.permission.CAMERA)
+                + ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                + ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(LogInScreen.this, new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            //android.Manifest.permission.CAMERA,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            PERMISSIONS_REQUEST);
+        } else {
+            locationPermission = true;
+            //cameraPermission = true;
+            storageReadPermission = true;
+            storageWritePermission = true;
+            return;
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST: {
+                if(grantResults.length > 0) {
+                    locationPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    storageReadPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    storageWritePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                }
+                break;
+            }
+        }
     }
 }

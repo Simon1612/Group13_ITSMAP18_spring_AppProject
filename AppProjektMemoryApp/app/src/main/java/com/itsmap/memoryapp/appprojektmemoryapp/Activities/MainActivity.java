@@ -1,113 +1,146 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
+import android.Manifest;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.location.Location;
-import android.os.IBinder;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
+import com.itsmap.memoryapp.appprojektmemoryapp.LogIn.LogInScreen;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.NotesListAdapter;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
 
+    final static int PERMISSIONS_REQUEST = 154;
+
     MemoryAppService service;
     MemoryAppService.LocalBinder binder;
-    Button createQuicknoteButton;
+    Button createQuicknoteButton, createNoteButton;
     ListView homescreenNotesListView;
     EditText quicknoteEdit;
-    CheckBox remindMeLaterCheckbox;
     List<NoteDataModel> recentNotesList;
     Intent serviceIntent;
-    String currentLocationReady, textSnip, quicknoteText;
+    String currentLocationReady, notesReady, textSnip, quicknoteText;
     NotesListAdapter notesListAdapter;
     LatLng location;
     boolean amIBound = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
+        boolean locationPermission =  getIntent().getExtras().getBoolean("locationPermission");
+        boolean storageReadPermission = getIntent().getExtras().getBoolean("storageReadPermission");
+        boolean storageWritePermission = getIntent().getExtras().getBoolean("storageWritePermission");
+
+        if(!locationPermission) {
+            if(!storageReadPermission || !storageWritePermission){
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_REQUEST);
+            }
+        } else if(!storageReadPermission || !storageWritePermission) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+        }
+
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
+        notesReady = getResources().getString(R.string.notesReady);
 
         createQuicknoteButton = findViewById(R.id.createQuicknoteButton);
+        createNoteButton = findViewById(R.id.newNoteBtn);
         homescreenNotesListView = findViewById(R.id.homescreenNotesList);
         quicknoteEdit = findViewById(R.id.quicknoteEdit);
-        remindMeLaterCheckbox = findViewById(R.id.remindMeLaterCheckbox);
 
         recentNotesList = new ArrayList<NoteDataModel>();
         serviceIntent = new Intent(this, MemoryAppService.class);
 
         bindService(serviceIntent, myServiceConnection, Context.BIND_AUTO_CREATE);
+
+        //Register receiver for currentLocationReady event
+        IntentFilter locationFilter = new IntentFilter();
+        locationFilter.addAction(currentLocationReady);
+        this.registerReceiver(locationBR, locationFilter);
+
+        //Register receiver for notesReady event
         IntentFilter filter = new IntentFilter();
-        filter.addAction(currentLocationReady);
-        this.registerReceiver(br, filter);
+        filter.addAction(notesReady);
+        this.registerReceiver(notesBR, filter);
 
         //Set adapter for listView
         notesListAdapter = new NotesListAdapter(this, recentNotesList);
         homescreenNotesListView.setAdapter(notesListAdapter);
         homescreenNotesListView.setOnItemClickListener(notesListAdapter);
 
-
-
         createQuicknoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 quicknoteText = quicknoteEdit.getText().toString();
+                NoteDataModel tempNote;
 
                 if(quicknoteText.length() > 10)
                     textSnip = String.format("%s...", quicknoteText.substring(0, 7));
                 else
                     textSnip = quicknoteText;
 
-                if(recentNotesList.size() >= 4){
+                if(recentNotesList.size() >= 4)
                     recentNotesList.remove(0);
-                    try{
-                        recentNotesList.add(new NoteDataModel(
-                                "Quicknote: " + textSnip,
-                                quicknoteText,
-                                location.latitude, location.longitude));
-                    }
-                    catch(Exception e){
-                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this,  getResources().getString(R.string.NoteCreationFailed), Toast.LENGTH_SHORT).show();
-                    }
 
-                    notesListAdapter.notifyDataSetChanged();
-                    quicknoteEdit.getText().clear();
+                if(location == null) {
+                    location = new LatLng(0,0);
                 }
-                else{
-                    try{
-                        recentNotesList.add(new NoteDataModel(
-                                "Quicknote: " + textSnip,
-                                quicknoteText,
-                                location.latitude, location.longitude));
-                    }
-                    catch(Exception e){
-                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.NoteCreationFailed) , Toast.LENGTH_SHORT).show();
-                     }
+                tempNote = new NoteDataModel(
+                    "Quicknote: " + textSnip,
+                    quicknoteText,
+                    location.latitude, location.longitude, "");
 
-                    notesListAdapter.notifyDataSetChanged();
-                    quicknoteEdit.getText().clear();
+                try{
+                    recentNotesList.add(tempNote);
+                    service.SaveNote(tempNote);
                 }
+                catch(Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this,  getResources().getString(R.string.NoteCreationFailed), Toast.LENGTH_SHORT).show();
+                }
+
+                notesListAdapter.notifyDataSetChanged();
+                quicknoteEdit.getText().clear();
+            }
+
+        });
+
+        createNoteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent createNoteIntent = new Intent(MainActivity.this, CreateNoteActivity.class);
+                startActivity(createNoteIntent);
             }
         });
     }
@@ -130,13 +163,29 @@ public class MainActivity extends BaseActivity {
         }
     };
 
-    //Inspiration from: https://developer.android.com/guide/components/broadcasts.html
-    private BroadcastReceiver br = new BroadcastReceiver(){
+
+    private BroadcastReceiver locationBR = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
             //recentNotesList.addAll(service.getLastFourNotes());
             try{
                 location = service.getCurrentLocation();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private BroadcastReceiver notesBR = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //recentNotesList.addAll(service.getLastFourNotes());
+            try{
+                recentNotesList.clear();
+                recentNotesList.addAll(service.getLastNotes());
+
+                notesListAdapter.notifyDataSetChanged();
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -150,12 +199,9 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
 
         unbindService(myServiceConnection);
-        unregisterReceiver(br);
+        unregisterReceiver(locationBR);
+        unregisterReceiver(notesBR);
 
-        /*SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("myCityPersisted", cityView.getText().toString());
-        editor.commit();*/ //HVIS VI SKAL GEMME NOGET SHIT
     }
 
     @Override

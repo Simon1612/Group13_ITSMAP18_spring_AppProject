@@ -1,89 +1,106 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
-import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Location;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
-public class CreateNoteActivity extends AppCompatActivity {
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-    final static int LOCATION_PERMISSIONS_REQUEST = 123;
-    final static int CAMERA_PERMISSIONS_REQUEST = 124;
-    private Boolean locationPermissionGranted;
-    private Boolean cameraPermissionGranted;
-    private LatLng location;
+public class CreateNoteActivity extends AppCompatActivity
+        implements OnMapReadyCallback {
+
+    final static int SET_MARKER_REQUEST = 234;
+    final static int CAMERA_REQUEST = 167;
+    LatLng location;
+    String currentLocationReady;
 
     MemoryAppService.LocalBinder binder;
-    Intent bindingIntent;
+    Intent serviceIntent;
     MemoryAppService memoryAppService;
-    Button OkBtn, CancelBtn, TakePictureBtn;
-    TextView LocationTextView, TimeStampTextView;
-    EditText NoteDescriptionText;
+    Button OkBtn, CancelBtn, TakePictureBtn, ExpandMapBtn;
+    TextView TimeStampTextView;
+    EditText NoteDescriptionText, NameText;
     ImageView NotePictureImageView;
     NoteDataModel noteData;
 
-    FirebaseFirestore firebaseDb = FirebaseFirestore.getInstance();
     Boolean mBound = false;
-
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_note);
-        bindingIntent = new Intent(this, MemoryAppService.class);
-        bindService(bindingIntent, memoryAppServiceConnection, Context.BIND_AUTO_CREATE);
-        startService(bindingIntent);
 
-        LocationTextView = findViewById(R.id.LocationTextView);
+        currentLocationReady = getResources().getString(R.string.currentLocationReady);
+        serviceIntent = new Intent(this, MemoryAppService.class);
+        bindService(serviceIntent, memoryAppServiceConnection, Context.BIND_AUTO_CREATE);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(currentLocationReady);
+
+        this.registerReceiver(br, filter);
+
         if(location != null) {
-            LocationTextView.setText("Latitude: " + location.latitude + " Longtitude: " + location.longitude);
+            noteData = new NoteDataModel("", "", location.latitude, location.longitude, "");
         } else {
-            this.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},LOCATION_PERMISSIONS_REQUEST);
+            noteData = new NoteDataModel("", "", 0, 0, "");
         }
 
         TimeStampTextView = findViewById(R.id.TimeStampTextView);
         TimeStampTextView.setText(noteData.getTimeStamp().toString());
 
+
+        NameText = findViewById(R.id.NoteNameText);
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
         NotePictureImageView = findViewById(R.id.NotePictureImageView);
+
+        String imgBitmap = noteData.getImageBitmap();
+            if(imgBitmap != null) {
+                if(!imgBitmap.isEmpty()) {
+                    byte[] decodedString = Base64.decode(imgBitmap.getBytes(), Base64.DEFAULT);
+                    Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    NotePictureImageView.setImageBitmap(decodedImg);
+                }
+            }
 
         OkBtn = findViewById(R.id.OkBtn);
         CancelBtn = findViewById(R.id.CancelBtn);
         TakePictureBtn = findViewById(R.id.TakePictureBtn);
+        ExpandMapBtn = findViewById(R.id.ExpandMapBtn);
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,36 +109,35 @@ public class CreateNoteActivity extends AppCompatActivity {
             }
         });
 
-        //Baseret på FirebaseFirestore dokumentation
         OkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                noteData.setDescription(NoteDescriptionText.getText().toString());
-                Map<String, Object> note = new HashMap<String, Object>();
-                note.put("Id", 1); //Virker self kun for den første note, der skal autogeneres ID til noterne.
-                note.put("Name", noteData.getName());
-                note.put("Timestamp", noteData.getTimeStamp());
-                note.put("Description", noteData.getDescription());
-                note.put("Latitude", noteData.getLocation().latitude);
-                note.put("Longtitude", noteData.getLocation().longitude);
-                note.put("Creator", FirebaseAuth.getInstance().getCurrentUser());
+                String name = NameText.getText().toString();
+                if(!name.matches("")) {
+                    noteData.setName(name);
+                } else {
+                    Toast.makeText(CreateNoteActivity.this, getResources().getString(R.string.NoteNameErrorTxt), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                firebaseDb.collection("Notes")
-                        .add(note)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d("DbUpdate", "New Note Added to Db");
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DbUpdate", "Error in adding new note to Db");
-                    }
-                });
+                if(location != null) {
+                    noteData.setLocation(location);
+                } else {
+                    noteData.setLocation(new LatLng(123, 123)); //random default-værdi
+                }
+
+                String description =  NoteDescriptionText.getText().toString();
+                if(!description.matches("")) {
+                    noteData.setDescription(description);
+                } else {
+                    Toast.makeText(CreateNoteActivity.this, getResources().getString(R.string.NoteDescriptionErrorTxt), Toast.LENGTH_SHORT).show();
+                    noteData.setDescription(" ");
+                }
+
+                memoryAppService.SaveNote(noteData);
 
                 Intent mainActivityIntent = new Intent(CreateNoteActivity.this, MainActivity.class);
-                CreateNoteActivity.this.startActivity(mainActivityIntent);
+                startActivity(mainActivityIntent);
 
             }
         });
@@ -129,15 +145,34 @@ public class CreateNoteActivity extends AppCompatActivity {
         TakePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkCallingOrSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSIONS_REQUEST);
-                } else {
                     Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
-                }
+                    startActivityForResult(pictureIntent, CAMERA_REQUEST);
+            }
+        });
+
+        ExpandMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mapActivityIntent = new Intent(CreateNoteActivity.this, MapActivity.class);
+                        if(location != null) {
+                            mapActivityIntent.putExtra("LocationLat", location.latitude);
+                            mapActivityIntent.putExtra("LocationLong", location.longitude);
+                        }
+                startActivityForResult(mapActivityIntent, SET_MARKER_REQUEST);
             }
         });
     }
+
+    @Override
+    public void onMapReady(final GoogleMap googleMap) {
+        LatLng markerLocation = new LatLng(location.latitude, location.longitude);
+        googleMap.addMarker(new MarkerOptions().position(markerLocation)
+                .title("New Note"));
+
+        googleMap.setMinZoomPreference(15);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(markerLocation));
+
+        }
 
     ServiceConnection memoryAppServiceConnection = new ServiceConnection() {
         @Override
@@ -148,15 +183,35 @@ public class CreateNoteActivity extends AppCompatActivity {
 
             try{
                 location = memoryAppService.getCurrentLocation();
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
+                if(location != null) {
+                    mapFragment.getMapAsync(CreateNoteActivity.this);
+                }
             }
             catch(Exception e){
                 e.printStackTrace();
             }
+
+            memoryAppService.startService(serviceIntent);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            unbindService(memoryAppServiceConnection);
             mBound = false;
+        }
+    };
+
+    private BroadcastReceiver br = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                location = memoryAppService.getCurrentLocation();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
         }
     };
 
@@ -164,67 +219,39 @@ public class CreateNoteActivity extends AppCompatActivity {
     protected void onDestroy() {
         //save shared preferences
         unbindService(memoryAppServiceConnection);
+        unregisterReceiver(br);
         mBound = false;
         super.onDestroy();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_PERMISSIONS_REQUEST: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_COARSE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        locationPermissionGranted = true;
-                    }
-
-                } else {
-                    locationPermissionGranted = false;
-                }
-                break;
-            }
-            case CAMERA_PERMISSIONS_REQUEST: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    cameraPermissionGranted = true;
-                    Intent pictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(pictureIntent, CAMERA_PERMISSIONS_REQUEST);
-                } else {
-                    cameraPermissionGranted = false;
-                }
-
-                break;
-            }
-        }
-    }
-
+    //Baseret på stackoverflow: https://stackoverflow.com/questions/36117882/is-it-possible-to-store-image-to-firebase-in-android
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAMERA_PERMISSIONS_REQUEST && resultCode == Activity.RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = data.getParcelableExtra("data");
             NotePictureImageView.setImageBitmap(photo);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            noteData.setImageBitmap(encoded);
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("binder", (Serializable) binder);
+        outState.putBinder("binder", binder);
+        outState.putParcelable("Location", location);
         outState.putSerializable("noteDataModel", noteData);
-        outState.putDouble("location_Latitude", location.latitude);
-        outState.putDouble("location_Longtitude", location.longitude);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onRestoreInstanceState(savedInstanceState, persistentState);
 
-        binder = (MemoryAppService.LocalBinder) savedInstanceState.getSerializable("binder");
-        noteData =(NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
-        noteData.setLocation(new LatLng(savedInstanceState.getDouble("location_Latitude"), savedInstanceState.getDouble("location_Longtitude")));
+        binder = (MemoryAppService.LocalBinder) savedInstanceState.getBinder("binder");
+        noteData = (NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
+        noteData.setLocation((LatLng) savedInstanceState.getParcelable("Location"));
     }
 }

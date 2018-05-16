@@ -1,4 +1,39 @@
-﻿#Tilføj idéer her!
+﻿OVERBLIK:
+ITSMAP App Projekt Overblik
+
+Overall:
+-	Rapport????
+-	Fix alle knapper etc
+-	Landscape mode
+-	Persistance mellem landscape/portrait
+-	Icon
+-	Farver
+- 	Notifikationer
+notesListAdapter:
+-	Items skal videresende til editNoteActivity.
+-	Fix listItemView så location/date star ordentligt.
+ MyNotesActivity:
+-	Gør full-screen listView med “+” I bunden til ny note.
+-	Mulighed for at slette note ved at trække enkelte items til siden.
+-	Automatisk list refresh når bunden nås. 
+editNotesActivity:
+-	(Slet knap)
+-	Gør map lille
+-	Flyt billed op
+-	Går noteTextView stor nok
+-	Lad map henvise til stor map med passende marker.
+mainActivity:
+-	Fix layout
+createNewNoteActivity:
+-	Gør map lille
+-	Flyt billed op
+-	Går noteTextView stor nok
+mapActivity:
+-	Fix så noter kommer ind som små icons
+-	Sæt google standard marker ud fra intent (item du kigger på lige nu).
+
+
+#Tilføj idéer her!
 
 #Simon: 05-05-2018
 Oprettet service til at snakke med Google Maps / Firebase.

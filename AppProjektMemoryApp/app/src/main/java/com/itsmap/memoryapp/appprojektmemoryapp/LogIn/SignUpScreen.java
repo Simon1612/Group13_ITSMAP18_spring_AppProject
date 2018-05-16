@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 
@@ -90,7 +91,7 @@ public class SignUpScreen extends AppCompatActivity {
                                     Toast.makeText(SignUpScreen.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    startActivity(new Intent(SignUpScreen.this, ProfileScreen.class));
+                                    startActivity(new Intent(SignUpScreen.this, MainActivity.class));
                                     finish();
                                 }
                             }
