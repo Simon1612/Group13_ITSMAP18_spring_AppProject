@@ -77,6 +77,10 @@ public class MemoryAppService extends Service {
     LocationRequest mLocationRequest;
     PendingIntent pendingIntent;
 
+    private NoteDataModel tmpNoteData;
+    public NoteDataModel getTmpNoteData() { return tmpNoteData; }
+    public void setTmpNoteData(NoteDataModel dataModel){ this.tmpNoteData = dataModel; }
+
     int ONGOING_NOTIFICATION_ID = 1337;
 
     public class LocalBinder extends Binder {
@@ -87,6 +91,7 @@ public class MemoryAppService extends Service {
 
     public MemoryAppService() {
     }
+
 
     @Override
     public void onCreate() {
@@ -156,8 +161,7 @@ public class MemoryAppService extends Service {
         }
         notification.setChannelId("1337");
 
-        //Start service as foreground
-        startForeground(ONGOING_NOTIFICATION_ID, notification.build());
+        notification.build();
     }
 
     private void createFirstNote() {
