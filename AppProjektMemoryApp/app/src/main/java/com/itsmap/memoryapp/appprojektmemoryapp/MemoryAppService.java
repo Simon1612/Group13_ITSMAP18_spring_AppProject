@@ -257,15 +257,6 @@ public class MemoryAppService extends Service {
                         }
 
                         updateLastNotes(4, notesReadyIntent);
-/*                        Iterator<NoteDataModel> lastNotesIter = lastNotes.iterator();
-
-                        while(lastNotesIter.hasNext()){
-                            NoteDataModel note = lastNotesIter.next();
-
-                            if(note.getName().equals(noteToDelete.getName())){
-                                lastNotesIter.remove();
-                            }
-                        }*/
 
                         Log.d(TAG, "Successfully  deleted note");
                            for(NoteDataModel note : myNotes){

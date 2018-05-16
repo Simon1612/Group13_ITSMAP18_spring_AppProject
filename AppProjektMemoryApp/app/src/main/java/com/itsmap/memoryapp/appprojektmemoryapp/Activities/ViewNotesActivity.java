@@ -118,7 +118,6 @@ public class ViewNotesActivity extends BaseActivity{
                     isEndOfList = false;
                 }
             }
-
         });
 
         setupSwipeMenu();
@@ -132,7 +131,6 @@ public class ViewNotesActivity extends BaseActivity{
         serviceIntent = new Intent(this, MemoryAppService.class);
         bindService(serviceIntent, myServiceConnection, Context.BIND_AUTO_CREATE);
     }
-
 
 
     private void setupSwipeMenu(){
@@ -173,6 +171,18 @@ public class ViewNotesActivity extends BaseActivity{
         }
     };
 
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        binder = (MemoryAppService.LocalBinder) savedInstanceState.getBinder("Binder");
+        service = binder.getService();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBinder("Binder", binder);
+
+        super.onSaveInstanceState(outState);
+    }
 
     private BroadcastReceiver notesBR = new BroadcastReceiver(){
         @Override
