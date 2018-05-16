@@ -9,8 +9,8 @@
 
     <Button
         android:id="@+id/myNotesCreateButton"
-        android:layout_width="56dp"
-        android:layout_height="53dp"
+        android:layout_width="102dp"
+        android:layout_height="96dp"
         android:background="@drawable/ic_add_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,8 +19,8 @@
 
     <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
         android:id="@+id/myNotesSwipeRefreshLayout"
-        android:layout_width="368dp"
-        android:layout_height="445dp"
+        android:layout_width="590dp"
+        android:layout_height="772dp"
         android:layout_marginTop="76dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
