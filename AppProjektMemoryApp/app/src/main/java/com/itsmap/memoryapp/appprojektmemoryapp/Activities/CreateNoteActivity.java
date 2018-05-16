@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -36,10 +35,6 @@ import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class CreateNoteActivity extends AppCompatActivity
         implements OnMapReadyCallback {
@@ -47,7 +42,7 @@ public class CreateNoteActivity extends AppCompatActivity
     final static int SET_MARKER_REQUEST = 234;
     final static int CAMERA_REQUEST = 167;
     LatLng location;
-    String currentLocationReady;
+    String currentLocationReady, imgBitmap;
 
     MemoryAppService.LocalBinder binder;
     Intent serviceIntent;
@@ -57,6 +52,7 @@ public class CreateNoteActivity extends AppCompatActivity
     EditText NoteDescriptionText, NameText;
     ImageView NotePictureImageView;
     NoteDataModel noteData;
+    Bitmap decodedImg;
 
     Boolean mBound = false;
 
@@ -74,33 +70,34 @@ public class CreateNoteActivity extends AppCompatActivity
 
         this.registerReceiver(br, filter);
 
-        if(location != null) {
-            noteData = new NoteDataModel("", "", location.latitude, location.longitude, "");
-        } else {
-            noteData = new NoteDataModel("", "", 0, 0, "");
+        if(noteData == null){
+            if(location != null) {
+                noteData = new NoteDataModel("", "", location.latitude, location.longitude, "");
+            } else {
+                noteData = new NoteDataModel("", "", 0, 0, "");
+            }
         }
 
         TimeStampTextView = findViewById(R.id.TimeStampTextView);
         TimeStampTextView.setText(noteData.getTimeStamp().toString());
 
-
         NameText = findViewById(R.id.NoteNameText);
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
-        NotePictureImageView = findViewById(R.id.NotePictureImageView);
-
-        String imgBitmap = noteData.getImageBitmap();
-            if(imgBitmap != null) {
-                if(!imgBitmap.isEmpty()) {
-                    byte[] decodedString = Base64.decode(imgBitmap.getBytes(), Base64.DEFAULT);
-                    Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    NotePictureImageView.setImageBitmap(decodedImg);
-                }
-            }
+        NotePictureImageView = findViewById(R.id.CreateNotePictureImageView);
 
         OkBtn = findViewById(R.id.OkBtn);
         CancelBtn = findViewById(R.id.CancelBtn);
         TakePictureBtn = findViewById(R.id.TakePictureBtn);
         ExpandMapBtn = findViewById(R.id.ExpandMapBtn);
+
+        imgBitmap = noteData.getImageBitmap();
+        if(imgBitmap != null) {
+            if(!imgBitmap.isEmpty()) {
+                byte[] decodedString = Base64.decode(imgBitmap.getBytes(), Base64.DEFAULT);
+                decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                NotePictureImageView.setImageBitmap(decodedImg);
+            }
+        }
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +191,9 @@ public class CreateNoteActivity extends AppCompatActivity
             }
 
             memoryAppService.startService(serviceIntent);
+
+
+
         }
 
         @Override

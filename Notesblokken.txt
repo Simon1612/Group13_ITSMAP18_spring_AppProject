@@ -2,29 +2,21 @@
 ITSMAP App Projekt Overblik
 
 Overall:
--	Rapport????
 -	Fix alle knapper etc
+-	Tablet layout
+-	TJEK ALT IGENNEM FOR FEJL/MANGLER
+-	Sæt ICON + TITLE ?? for navigation header
+-	Video
 
-MyNotesActivity:
--	Gør full-screen listView med “+” I bunden til ny note.
--	Mulighed for at slette note ved at trække enkelte items til siden.
--	Automatisk list refresh når bunden nås. 
-
-editNotesActivity:
--	(Slet knap)
--	Gør map lille
--	Flyt billed op
--	Går noteTextView stor nok
--	Lad map henvise til stor map med passende marker.
 
 createNewNoteActivity:
--	Gør map lille
--	Flyt billed op
--	Går noteTextView stor nok
+-	Persistér billede mellem landscape/portrait
 
-mapActivity:
--	Fix så noter kommer ind som små icons
--	Sæt google standard marker ud fra intent (item du kigger på lige nu).
+Rapport:
+-	Konklusion
+- 	MoSCoW
+-	Known bugs
+
 
 
 #Tilføj idéer her!
