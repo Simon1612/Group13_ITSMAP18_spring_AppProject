@@ -7,19 +7,26 @@
     tools:context=".Activities.ViewNotesActivity">
 
 
-    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/myNotesSwipeRefreshLayout"
-        android:layout_width="368dp"
-        android:layout_height="335dp"
-        android:layout_marginBottom="228dp"
-        android:layout_marginTop="4dp"
+    <Button
+        android:id="@+id/myNotesCreateButton"
+        android:layout_width="56dp"
+        android:layout_height="53dp"
+        android:background="@drawable/ic_add_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srl_direction="bottom"
+        app:layout_constraintTop_toBottomOf="@+id/myNotesSwipeRefreshLayout" />
+
+    <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
+        android:id="@+id/myNotesSwipeRefreshLayout"
+        android:layout_width="368dp"
+        android:layout_height="445dp"
+        android:layout_marginTop="76dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ListView
+        <com.baoyz.swipemenulistview.SwipeMenuListView
             android:id="@+id/viewNotesNotesList"
             android:layout_width="0dp"
             android:layout_height="265dp"
@@ -32,17 +39,5 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout>
-
-
-    <Button
-        android:id="@+id/testButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myNotesSwipeRefreshLayout" />
-
-
 </android.support.constraint.ConstraintLayout>
+

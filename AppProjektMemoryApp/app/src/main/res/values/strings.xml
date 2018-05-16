@@ -34,7 +34,7 @@
     <string name="CreateNoteHeadline">Create New Note</string>
     <string name="TimeStampDefaultText">Current Time</string>
     <string name="LocationDefaultText">Current Location</string>
-    <string name="NoteDescriptionDefaultText">Note Description</string>
+    <string name="NoteDescriptionDefaultText">Note Description:</string>
     <string name="TakePictureBtnTxt">Add a Picture</string>
     <string name="CancelBtnText">Cancel</string>
     <string name="OkBtnText">OK</string>
@@ -73,4 +73,12 @@
 
     <string name="googleMapsApiKey">AIzaSyCWkDTUPbsjbFlETjI8kBpbjOyhNbRjDq0</string>
     <string name="CreateNoteBtnTxt">Create New Note</string>
+    <string name="ExpandMapTxt">Expand Map</string>
+    <string name="DeleteBtnTxt">Delete Note</string>
+    <string name="ReturnBtnTxt">Return</string>
+
+    <string name="NoteNameErrorTxt">You need to give your Note a Name!</string>
+    <string name="NoteDescriptionErrorTxt">You did not give your note a description, are you sure? Go to edit to add one!</string>
+    <string name="NameHeadlineTxt">Note Name:</string>
+    <string name="TimeStampHeadlineTxt">Time:</string>
 </resources>

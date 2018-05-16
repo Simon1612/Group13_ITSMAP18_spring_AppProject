@@ -6,13 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
@@ -24,9 +31,9 @@ import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutD
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewNotesActivity extends BaseActivity implements SwipyRefreshLayout.OnRefreshListener {
+public class ViewNotesActivity extends BaseActivity{
 
-    ListView myNotesListView;
+    SwipeMenuListView myNotesListView;
     NotesListAdapter myNotesListAdapter;
     List<NoteDataModel> myNotesList;
 
@@ -38,22 +45,23 @@ public class ViewNotesActivity extends BaseActivity implements SwipyRefreshLayou
     String myNotesReady;
     SwipyRefreshLayout refreshLayout;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_notes_screen);
 
-        testButton = findViewById(R.id.testButton);
+        testButton = findViewById(R.id.myNotesCreateButton);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.updateMyNotes(1);
+                Intent createNoteIntent = new Intent(getApplicationContext(), CreateNoteActivity.class);
+                startActivity(createNoteIntent);
             }
         });
 
         refreshLayout = findViewById(R.id.myNotesSwipeRefreshLayout);
-        refreshLayout.setOnRefreshListener(this);
-
+        refreshLayout.setEnabled(false);
 
         myNotesReady = getResources().getString(R.string.myNotesReady);
 
@@ -63,8 +71,59 @@ public class ViewNotesActivity extends BaseActivity implements SwipyRefreshLayou
 
         myNotesListView.setAdapter(myNotesListAdapter);
         myNotesListView.setOnItemClickListener(myNotesListAdapter);
+        myNotesListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                switch(index){
+                    case 0:
+                        service.deleteNote(myNotesList.get(position));
+                        myNotesList.remove(position);
+                        myNotesListAdapter.notifyDataSetChanged();
+                }
+                return false; //Hides the swipe menu
+            }
+        });
 
-        //Register receiver for notesReady event
+        //https://stackoverflow.com/questions/28200309/how-to-implement-refresh-listview-and-bring-new-items-in-list-if-it-reach-end-of
+        myNotesListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            int lastVisibleItem;
+            int totalItemCount;
+            boolean isEndOfList;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            //do nothing
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                this.totalItemCount = totalItemCount;
+                this.lastVisibleItem = firstVisibleItem + visibleItemCount - 1;
+                // prevent checking on short lists
+                if (totalItemCount > visibleItemCount)
+                    checkEndOfList();
+            }
+
+            private synchronized void checkEndOfList() {
+                // trigger after 2nd to last item
+                if (lastVisibleItem >= (totalItemCount - 2)) {
+                    if (!isEndOfList) {
+                        service.updateMyNotes(10);
+                        refreshLayout.setEnabled(true);
+                        refreshLayout.setRefreshing(true);
+                    }
+                    isEndOfList = true;
+                } else {
+                    isEndOfList = false;
+                }
+            }
+        });
+
+        setupSwipeMenu();
+
+
+        //Register receiver for myNotesReady event
         IntentFilter filter = new IntentFilter();
         filter.addAction(myNotesReady);
         this.registerReceiver(notesBR, filter);
@@ -74,11 +133,23 @@ public class ViewNotesActivity extends BaseActivity implements SwipyRefreshLayou
     }
 
 
-    @Override
-    public void onRefresh(SwipyRefreshLayoutDirection direction)
-    {
-        service.updateMyNotes(4); //Send command as intent instead?
+    private void setupSwipeMenu(){
+
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(255,
+                        0, 0)));
+                deleteItem.setWidth(180);
+                deleteItem.setIcon(R.drawable.ic_delete_black);
+                menu.addMenuItem(deleteItem);
+            }
+        };
+        myNotesListView.setMenuCreator(creator);
     }
+
 
     private ServiceConnection myServiceConnection = new ServiceConnection() {
 
@@ -91,7 +162,6 @@ public class ViewNotesActivity extends BaseActivity implements SwipyRefreshLayou
             service.startService(serviceIntent);
             myNotesList.addAll(service.getMyNotes());
             myNotesListAdapter.notifyDataSetChanged();
-            //service.updateMyNotes(4);
         }
 
         @Override
@@ -101,11 +171,24 @@ public class ViewNotesActivity extends BaseActivity implements SwipyRefreshLayou
         }
     };
 
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        binder = (MemoryAppService.LocalBinder) savedInstanceState.getBinder("Binder");
+        service = binder.getService();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBinder("Binder", binder);
+
+        super.onSaveInstanceState(outState);
+    }
 
     private BroadcastReceiver notesBR = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
             refreshLayout.setRefreshing(false);
+            refreshLayout.setEnabled(false);
             try{
                 myNotesList.clear();
                 myNotesList.addAll(service.getMyNotes());

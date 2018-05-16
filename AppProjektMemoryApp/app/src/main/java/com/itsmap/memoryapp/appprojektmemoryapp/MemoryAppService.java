@@ -11,7 +11,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -46,6 +48,7 @@ import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -74,6 +77,10 @@ public class MemoryAppService extends Service {
     LocationRequest mLocationRequest;
     PendingIntent pendingIntent;
 
+    private NoteDataModel tmpNoteData;
+    public NoteDataModel getTmpNoteData() { return tmpNoteData; }
+    public void setTmpNoteData(NoteDataModel dataModel){ this.tmpNoteData = dataModel; }
+
     int ONGOING_NOTIFICATION_ID = 1337;
 
     public class LocalBinder extends Binder {
@@ -85,6 +92,7 @@ public class MemoryAppService extends Service {
     public MemoryAppService() {
     }
 
+
     @Override
     public void onCreate() {
         currentLocationReady = getResources().getString(R.string.currentLocationReady);
@@ -94,11 +102,6 @@ public class MemoryAppService extends Service {
         lastNotes = new ArrayList<NoteDataModel>();
         myNotes = new ArrayList<NoteDataModel>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        //Set broadcast receiver
-    /*    IntentFilter filter = new IntentFilter();
-        filter.addAction(currentLocationReady);
-        this.registerReceiver(br, filter);*/
     }
 
     @Override
@@ -124,6 +127,7 @@ public class MemoryAppService extends Service {
 
         getLocation();
         lastNotes = myNotes = updateLastNotes(4, notesReadyIntent);
+        updateMyNotes(10); // Gets another 6 notes
 
         sendBroadcast(locationReadyIntent);
         sendBroadcast(notesReadyIntent);
@@ -151,12 +155,13 @@ public class MemoryAppService extends Service {
                         .setContentIntent(pendingIntent)
                         .setWhen(System.currentTimeMillis());
 
-        nChannel = new NotificationChannel("1337", getResources().getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
-        nManager.createNotificationChannel(nChannel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nChannel = new NotificationChannel("1337", getResources().getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
+            nManager.createNotificationChannel(nChannel);
+        }
         notification.setChannelId("1337");
 
-        //Start service as foreground
-        startForeground(ONGOING_NOTIFICATION_ID, notification.build());
+        notification.build();
     }
 
     private void createFirstNote() {
@@ -172,7 +177,7 @@ public class MemoryAppService extends Service {
                                 .document(getResources().getString(R.string.firstNoteName));
 
                         if(docRef == null)
-                            SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0));
+                            SaveNote(new NoteDataModel(getResources().getString(R.string.firstNoteName), getResources().getString(R.string.firstNoteDescription), 0, 0, ""));
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -180,7 +185,6 @@ public class MemoryAppService extends Service {
             }
         });
     }
-
 
     public void SaveNote(final NoteDataModel note){
 
@@ -191,6 +195,7 @@ public class MemoryAppService extends Service {
                 map.put("Name", note.getName());
                 map.put("Timestamp", note.getTimeStamp());
                 map.put("Description", note.getDescription());
+                map.put("ImageBitmap", note.getImageBitmap());
                 map.put("Latitude", note.getLocation().latitude);
                 map.put("Longitude", note.getLocation().longitude);
 
@@ -204,6 +209,27 @@ public class MemoryAppService extends Service {
                             .setWhen(System.currentTimeMillis());
                     nManager.notify(1337, notification.build());
                 }
+            }
+        });
+
+        t.start();
+    }
+
+    public void UpdateNote(final NoteDataModel note, final String oldNoteName) {
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("Name", note.getName());
+                map.put("Timestamp", note.getTimeStamp());
+                map.put("Description", note.getDescription());
+                map.put("ImageBitmap", note.getImageBitmap());
+                map.put("Latitude", note.getLocation().latitude);
+                map.put("Longitude", note.getLocation().longitude);
+
+                userRef.collection("Notes").document(oldNoteName).delete();
+                userRef.collection("Notes").document(note.getName()).set(map);
             }
         });
 
@@ -242,6 +268,42 @@ public class MemoryAppService extends Service {
         return tmpList;
     }
 
+
+
+    public void deleteNote(final NoteDataModel noteToDelete){
+        userRef.collection("Notes").document(noteToDelete.getName())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Iterator<NoteDataModel> myNotesIter = myNotes.iterator();
+
+                        while(myNotesIter.hasNext()){
+                            NoteDataModel note = myNotesIter.next();
+
+                            if(note.getName().equals(noteToDelete.getName())){
+                                myNotesIter.remove();
+                            }
+                        }
+
+                        updateLastNotes(4, notesReadyIntent);
+
+                        Log.d(TAG, "Successfully  deleted note");
+                           for(NoteDataModel note : myNotes){
+                               if(note.getName().equals(noteToDelete.getName())){
+                                   myNotes.remove(note);
+                            }
+                        }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Failed to delete note");
+                        e.printStackTrace();
+                    }
+                });
+    }
 
     public void updateMyNotes(int limit){
 
