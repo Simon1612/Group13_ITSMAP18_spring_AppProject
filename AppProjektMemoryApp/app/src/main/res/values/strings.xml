@@ -52,7 +52,7 @@
     <string name="firstNoteDescription">Your very first note!</string>
     <string name="firstNoteLocation">"Heaven!"</string>
 
-    <string name="NavigationHeaderTitle">"TITLE + ICON?"</string>
+    <string name="NavigationHeaderTitle">"Memory App"</string>
     <string name="DrawerItemHome">Home</string>
     <string name="DrawerItemSettings">Settings</string>
     <string name="DrawerItemNotes">My Notes</string>

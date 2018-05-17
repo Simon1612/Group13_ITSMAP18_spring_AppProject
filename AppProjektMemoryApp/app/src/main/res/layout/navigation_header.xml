@@ -1,17 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/weather_item"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:padding="10dp">
 
-    <TextView
-        android:layout_width="match_parent"
+
+    <LinearLayout
+        android:id="@+id/typefdas"
+        android:layout_width="227dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/NavigationHeaderTitle"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/black" />
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toEndOf="parent">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/note_image" />
+
+
+        <TextView
+            android:id="@+id/tempUnitTxtView"
+            android:layout_width="175dp"
+            android:layout_height="match_parent"
+
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/NavigationHeaderTitle"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</RelativeLayout>

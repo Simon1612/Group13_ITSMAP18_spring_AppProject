@@ -10,11 +10,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
-import android.widget.ListView;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -26,7 +24,6 @@ import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.NotesListAdapter;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout;
-import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,19 +168,6 @@ public class ViewNotesActivity extends BaseActivity{
         }
     };
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        binder = (MemoryAppService.LocalBinder) savedInstanceState.getBinder("Binder");
-        service = binder.getService();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBinder("Binder", binder);
-
-        super.onSaveInstanceState(outState);
-    }
-
     private BroadcastReceiver notesBR = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -201,6 +185,19 @@ public class ViewNotesActivity extends BaseActivity{
 
         }
     };
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        binder = (MemoryAppService.LocalBinder) savedInstanceState.getBinder("Binder");
+        service = binder.getService();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBinder("Binder", binder);
+
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onDestroy() {
