@@ -133,9 +133,12 @@ public class CreateNoteActivity extends AppCompatActivity
 
                 memoryAppService.SaveNote(noteData);
 
-                Intent mainActivityIntent = new Intent(CreateNoteActivity.this, MainActivity.class);
-                startActivity(mainActivityIntent);
+                Intent data = new Intent();
+                data.putExtra("noteDataModel", noteData);
+                data.putExtra("location", noteData.getLocation());
 
+                setResult(RESULT_OK, data);
+                finish();
             }
         });
 
