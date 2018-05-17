@@ -15,7 +15,6 @@ public class NoteDataModel implements Serializable{
         Name = _name;
         Description = _noteDescription;
         ImageBitmap = _imgBitmap;
-
         Location = new LatLng(_latitude, _longitude);
     }
 
@@ -32,7 +31,6 @@ public class NoteDataModel implements Serializable{
         Description = _noteDescription;
         ImageBitmap = _imgBitmap;
         Location = new LatLng(_latitude, _longitude);
-
     }
 
 
@@ -50,7 +48,6 @@ public class NoteDataModel implements Serializable{
 
     private String ImageBitmap;
     public void setImageBitmap(String imageBitmap) {this.ImageBitmap = imageBitmap;}
-
     public String getImageBitmap() { return ImageBitmap; }
 
     private transient LatLng Location;

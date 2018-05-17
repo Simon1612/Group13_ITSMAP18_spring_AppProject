@@ -1,23 +1,18 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,22 +23,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EditNotesActivity extends AppCompatActivity
 implements OnMapReadyCallback {
@@ -127,8 +113,8 @@ implements OnMapReadyCallback {
 
                 memoryAppService.UpdateNote(noteData, oldNoteName);
 
-                Intent mainActivityIntent = new Intent(EditNotesActivity.this, MainActivity.class);
-                EditNotesActivity.this.startActivity(mainActivityIntent);
+                setResult(RESULT_OK);
+                finish();
             }
         });
 

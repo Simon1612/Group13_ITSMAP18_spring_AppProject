@@ -117,7 +117,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
-        android:id="@+id/NotePictureImageView"
+        android:id="@+id/CreateNotePictureImageView"
         android:layout_width="105dp"
         android:layout_height="94dp"
         android:layout_marginBottom="8dp"

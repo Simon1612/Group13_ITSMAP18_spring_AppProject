@@ -20,9 +20,10 @@
     <com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
         android:id="@+id/myNotesSwipeRefreshLayout"
         android:layout_width="997dp"
-        android:layout_height="768dp"
+        android:layout_height="350dp"
         android:layout_marginTop="76dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

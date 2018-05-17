@@ -1,6 +1,5 @@
 package com.itsmap.memoryapp.appprojektmemoryapp;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,22 +7,18 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,23 +34,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import static android.content.ContentValues.TAG;
 
@@ -75,14 +64,12 @@ public class MemoryAppService extends Service {
     private FusedLocationProviderClient mFusedLocationClient;
     String notesReady, myNotesReady;
     LatLng currentLocation;
-    LocationRequest mLocationRequest;
-    PendingIntent pendingIntent;
+
 
     private NoteDataModel tmpNoteData;
     public NoteDataModel getTmpNoteData() { return tmpNoteData; }
     public void setTmpNoteData(NoteDataModel dataModel){ this.tmpNoteData = dataModel; }
 
-    int ONGOING_NOTIFICATION_ID = 1337;
 
     public class LocalBinder extends Binder {
         public MemoryAppService getService() {
@@ -238,7 +225,7 @@ public class MemoryAppService extends Service {
     }
 
 
-    private List<NoteDataModel> updateLastNotes(int limit, final Intent broadcastIntent){
+    public List<NoteDataModel> updateLastNotes(int limit, final Intent broadcastIntent){
 
         final List<NoteDataModel> tmpList = new ArrayList<NoteDataModel>();
 
@@ -251,12 +238,15 @@ public class MemoryAppService extends Service {
                 if(task.isSuccessful()){
                     ObjectMapper mapper = new ObjectMapper();
                     NoteDataModel tempData;
+                    lastNotes.clear();
+
                     for(QueryDocumentSnapshot doc : task.getResult()){
                         JSONObject json = new JSONObject(doc.getData());
 
                         try {
                             tempData = mapper.readValue(json.toString(), NoteDataModel.class);
                             tmpList.add(tempData);
+                            lastNotes.add(tempData);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -266,6 +256,7 @@ public class MemoryAppService extends Service {
                 }
             }
         });
+
         return tmpList;
     }
 
@@ -296,8 +287,7 @@ public class MemoryAppService extends Service {
                             }
                         }
             }
-        })
-                .addOnFailureListener(new OnFailureListener() {
+        }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.d(TAG, "Failed to delete note");

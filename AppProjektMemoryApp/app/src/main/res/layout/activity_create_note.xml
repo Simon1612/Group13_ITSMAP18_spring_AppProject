@@ -70,7 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.156"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NotePictureImageView"
+        app:layout_constraintTop_toBottomOf="@+id/CreateNotePictureImageView"
         app:layout_constraintVertical_bias="0.057" />
 
     <EditText
@@ -119,7 +119,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
-        android:id="@+id/NotePictureImageView"
+        android:id="@+id/CreateNotePictureImageView"
         android:layout_width="122dp"
         android:layout_height="107dp"
         android:layout_marginBottom="8dp"

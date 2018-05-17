@@ -1,7 +1,6 @@
 package com.itsmap.memoryapp.appprojektmemoryapp.Activities;
 
 import android.Manifest;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
-import com.itsmap.memoryapp.appprojektmemoryapp.LogIn.LogInScreen;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.NotesListAdapter;
@@ -44,6 +42,8 @@ public class MainActivity extends BaseActivity {
     NotesListAdapter notesListAdapter;
     LatLng location;
     boolean amIBound = false;
+
+    private static final int CreateNoteReqCode = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,9 +140,47 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent createNoteIntent = new Intent(MainActivity.this, CreateNoteActivity.class);
-                startActivity(createNoteIntent);
+                startActivityForResult(createNoteIntent, CreateNoteReqCode);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CreateNoteReqCode)
+        {
+            if (resultCode == RESULT_OK)
+            {
+                if (data.getExtras() != null)
+                {
+                    if(recentNotesList.size() >= 4)
+                        recentNotesList.remove(0);
+
+                    NoteDataModel tempModel = (NoteDataModel) data.getSerializableExtra("noteDataModel");
+                    tempModel.setLocation(data.getParcelableExtra("location"));
+
+                    recentNotesList.add(tempModel);
+
+                    notesListAdapter.notifyDataSetChanged();
+                    quicknoteEdit.getText().clear();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(service != null) {
+            Intent notesReadyIntent = new Intent();
+            notesReadyIntent.setAction(notesReady);
+
+            service.updateLastNotes(4, notesReadyIntent);
+        }
     }
 
     private ServiceConnection myServiceConnection = new ServiceConnection() {
@@ -201,7 +239,6 @@ public class MainActivity extends BaseActivity {
         unbindService(myServiceConnection);
         unregisterReceiver(locationBR);
         unregisterReceiver(notesBR);
-
     }
 
     @Override
