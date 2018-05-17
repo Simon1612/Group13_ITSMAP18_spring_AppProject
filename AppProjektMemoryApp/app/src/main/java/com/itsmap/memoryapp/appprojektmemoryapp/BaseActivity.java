@@ -1,6 +1,7 @@
 package com.itsmap.memoryapp.appprojektmemoryapp;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
@@ -8,12 +9,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MainActivity;
-import com.itsmap.memoryapp.appprojektmemoryapp.Activities.MapActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.Activities.ViewNotesActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.LogIn.ProfileScreen;
 
@@ -64,22 +63,12 @@ public class BaseActivity extends AppCompatActivity {
                         startActivity(notesIntent);
                         break;
 
-                    case R.id.SettingsItem:
-/*                        Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
-                        startActivity(intent);*/
-                        break;
-
                     case R.id.ProfileItem:
                         Intent profileIntent = new Intent(getApplicationContext(), ProfileScreen.class);
                         profileIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(profileIntent);
                         break;
 
-                    case R.id.MapItem:
-                        Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
-                        mapIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(mapIntent);
-                        break;
                 }
                 drawerLayout.closeDrawers();
                 return true;

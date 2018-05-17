@@ -44,11 +44,13 @@ public class LogInScreen extends AppCompatActivity {
 
         checkForPermissions();
 
+        Intent mainIntent = new Intent(LogInScreen.this, MainActivity.class)
+                .putExtra("locationPermission", locationPermission)
+                .putExtra("storageReadPermission", storageReadPermission)
+                .putExtra("storageWritePermission", storageWritePermission);
+
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LogInScreen.this, MainActivity.class)
-                                    .putExtra("locationPermission", locationPermission)
-                                    .putExtra("storageReadPermission", storageReadPermission)
-                                    .putExtra("storageWritePermission", storageWritePermission));
+            startActivity(mainIntent);
             finish();
         }
 
@@ -114,8 +116,7 @@ public class LogInScreen extends AppCompatActivity {
                                         Toast.makeText(LogInScreen.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    Intent intent = new Intent(LogInScreen.this, MainActivity.class);
-                                    startActivity(intent);
+                                    startActivity(mainIntent);
                                     finish();
                                 }
                             }
@@ -126,19 +127,16 @@ public class LogInScreen extends AppCompatActivity {
 
     public void checkForPermissions() {
         if(ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                //+ ContextCompat.checkSelfPermission(LogInScreen.this, android.Manifest.permission.CAMERA)
                 + ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 + ContextCompat.checkSelfPermission(LogInScreen.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(LogInScreen.this, new String[]{
                             Manifest.permission.ACCESS_COARSE_LOCATION,
-                            //android.Manifest.permission.CAMERA,
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             PERMISSIONS_REQUEST);
         } else {
             locationPermission = true;
-            //cameraPermission = true;
             storageReadPermission = true;
             storageWritePermission = true;
             return;
@@ -152,8 +150,8 @@ public class LogInScreen extends AppCompatActivity {
             case PERMISSIONS_REQUEST: {
                 if(grantResults.length > 0) {
                     locationPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    storageReadPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                    storageWritePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+                    storageReadPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    storageWritePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                 }
                 break;
             }

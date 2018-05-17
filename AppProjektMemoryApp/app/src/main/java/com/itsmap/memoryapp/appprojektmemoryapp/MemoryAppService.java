@@ -229,6 +229,11 @@ public class MemoryAppService extends Service {
 
         final List<NoteDataModel> tmpList = new ArrayList<NoteDataModel>();
 
+        if(userRef == null){
+            database = FirebaseFirestore.getInstance();
+            currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            userRef = database.collection("Users").document(currentUser.getEmail());
+        }
         userRef.collection("Notes")
                 .orderBy("Timestamp", Query.Direction.DESCENDING)
                 .limit(limit)

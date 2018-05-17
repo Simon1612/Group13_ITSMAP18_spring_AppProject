@@ -31,13 +31,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 import java.io.ByteArrayOutputStream;
 
-public class CreateNoteActivity extends AppCompatActivity
+public class CreateNoteActivity extends BaseActivity
         implements OnMapReadyCallback {
 
     final static int SET_MARKER_REQUEST = 234;
@@ -85,6 +86,15 @@ public class CreateNoteActivity extends AppCompatActivity
         NameText = findViewById(R.id.NoteNameText);
         NoteDescriptionText = findViewById(R.id.NoteDescriptionText);
         NotePictureImageView = findViewById(R.id.CreateNotePictureImageView);
+
+        String imageBitmap = noteData.getImageBitmap();
+        if(imageBitmap != null) {
+            if(!imageBitmap.isEmpty()) {
+                byte[] decodedString = Base64.decode(noteData.getImageBitmap().getBytes(), Base64.DEFAULT);
+                Bitmap decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                NotePictureImageView.setImageBitmap(decodedImg);
+            }
+        }
 
         OkBtn = findViewById(R.id.OkBtn);
         CancelBtn = findViewById(R.id.CancelBtn);

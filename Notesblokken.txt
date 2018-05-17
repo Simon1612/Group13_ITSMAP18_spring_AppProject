@@ -2,21 +2,9 @@
 ITSMAP App Projekt Overblik
 
 Overall:
--	Fix alle knapper etc
--	Tablet layout
--	TJEK ALT IGENNEM FOR FEJL/MANGLER
--	Sæt ICON + TITLE ?? for navigation header
+-	"Assumptions for and explanations to the chosen design."
 -	Video
-
-
-createNewNoteActivity:
--	Persistér billede mellem landscape/portrait
-
-Rapport:
--	Konklusion
-- 	MoSCoW (+ UseCase diagram?)
--	Known bugs
-
+-	Signed APK
 
 
 #Tilføj idéer her!

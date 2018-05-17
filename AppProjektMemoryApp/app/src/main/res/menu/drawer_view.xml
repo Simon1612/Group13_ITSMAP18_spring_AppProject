@@ -13,12 +13,5 @@
         <item
             android:id="@+id/ProfileItem"
             android:title="@string/DrawerItemProfile" />
-        <item
-            android:id="@+id/SettingsItem"
-            android:title="@string/DrawerItemSettings" />
-        <item
-            android:id="@+id/MapItem"
-            android:title="@string/DrawerItemMap" />
-
     </group>
 </menu>

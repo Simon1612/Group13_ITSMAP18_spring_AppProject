@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
@@ -25,13 +24,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.itsmap.memoryapp.appprojektmemoryapp.BaseActivity;
 import com.itsmap.memoryapp.appprojektmemoryapp.MemoryAppService;
 import com.itsmap.memoryapp.appprojektmemoryapp.Models.NoteDataModel;
 import com.itsmap.memoryapp.appprojektmemoryapp.R;
 
 import java.io.ByteArrayOutputStream;
 
-public class EditNotesActivity extends AppCompatActivity
+public class EditNotesActivity extends BaseActivity
 implements OnMapReadyCallback {
 
     final static int SET_MARKER_REQUEST = 234;
@@ -101,11 +101,12 @@ implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 String name = NoteNameText.getText().toString();
-                if(name != "") {
+
+                if(!name.matches("")) {
                     noteData.setName(name);
-                }
-                else {
-                    Toast.makeText(EditNotesActivity.this, "You need to set the Name", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(EditNotesActivity.this, getResources().getString(R.string.NoteNameErrorTxt), Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 String noteDescription = NoteDescriptionText.getText().toString();

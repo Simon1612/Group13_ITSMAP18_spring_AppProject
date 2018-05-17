@@ -41,37 +41,33 @@
     <string name="EditPictureBtnTxt">Change Picture</string>
     <string name="EditNoteHeadline">Edit Note</string>
     <string name="CreateQuickNoteTxt">Enter Quicknote Here...</string>
-    <string name="RemindMeLaterCheckBoxTxt">Remind me later</string>
     <string name="CreateQuicknoteButtonTxt">Create Quicknote</string>
-    <string name="currentLocationReady">CURRENT_LOCATION_READY</string>
-    <string name="notesReady">NOTES_READY</string>
-    <string name="myNotesReady">MY_NOTES_READY</string>
-    <string name="notificationTitle">Memory Service</string>
+    <string name="currentLocationReady" translatable="false">CURRENT_LOCATION_READY</string>
+    <string name="notesReady" translatable="false">NOTES_READY</string>
+    <string name="myNotesReady" translatable="false">MY_NOTES_READY</string>
+    <string name="notificationTitle" translatable="false">Memory Service</string>
     <string name="notificationText">Your note has been saved.</string>
-    <string name="firstNoteName">First Note</string>
+    <string name="firstNoteName" translatable="false">First Note</string>
     <string name="firstNoteDescription">Your very first note!</string>
-    <string name="firstNoteLocation">"Heaven!"</string>
+    <string name="firstNoteLocation" translatable="false">"Heaven!"</string>
 
-    <string name="NavigationHeaderTitle">"Memory App"</string>
+    <string name="NavigationHeaderTitle" translatable="false">"Memory App"</string>
     <string name="DrawerItemHome">Home</string>
     <string name="DrawerItemSettings">Settings</string>
     <string name="DrawerItemNotes">My Notes</string>
     <string name="DrawerItemProfile">My profile</string>
-    <string name="DrawerItemMap">Map stuff</string>
+    <string name="DrawerItemMap">Map</string>
 
     <string name="NoteCreationFailed">Failed to create note.</string>
     <string name="LocationPermissionsSuccess">Location-services was succesfully enabled</string>
     <string name="CameraPermissionsSuccess">Camera-services was succesfully enabled</string>
     <string name="LocationPermissionsFailed">Something went wrong with enabling Location-services</string>
     <string name="CameraPermissionsFailed">Something went wrong with enabling Camera-services</string>
-    <string name="LocationPermissionsEncourage">The App will not be that much fun if you do not enable location-services</string>
-    <string name="CameraPermissionsEncourage">You will not be able to add awesome pictures if you do not enable Camera-services</string>
     <string name="StoragePermissionsSuccess">External-storage was succesfully enabled</string>
     <string name="StoragePermissionsFailed">Something went wrong with enabling External-storage</string>
-    <string name="StoragePermissionsEncourage">You will not be able to save your noted if you do not enable External-storage</string>
 
 
-    <string name="googleMapsApiKey">AIzaSyCWkDTUPbsjbFlETjI8kBpbjOyhNbRjDq0</string>
+    <string name="googleMapsApiKey" translatable="false">AIzaSyCWkDTUPbsjbFlETjI8kBpbjOyhNbRjDq0</string>
     <string name="CreateNoteBtnTxt">Create New Note</string>
     <string name="ExpandMapTxt">Expand Map</string>
     <string name="DeleteBtnTxt">Delete Note</string>

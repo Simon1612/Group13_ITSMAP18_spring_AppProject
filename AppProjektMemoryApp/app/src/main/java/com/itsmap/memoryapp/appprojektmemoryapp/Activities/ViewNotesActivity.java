@@ -38,22 +38,23 @@ public class ViewNotesActivity extends BaseActivity{
     MemoryAppService service;
     MemoryAppService.LocalBinder binder;
     Intent serviceIntent;
-    Button testButton;
+    Button createNoteButton;
     String myNotesReady;
     SwipyRefreshLayout refreshLayout;
 
+    private static final int CreateNoteReqCode = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_notes_screen);
 
-        testButton = findViewById(R.id.myNotesCreateButton);
-        testButton.setOnClickListener(new View.OnClickListener() {
+        createNoteButton = findViewById(R.id.myNotesCreateButton);
+        createNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent createNoteIntent = new Intent(getApplicationContext(), CreateNoteActivity.class);
-                startActivity(createNoteIntent);
+                startActivityForResult(createNoteIntent, CreateNoteReqCode);
             }
         });
 
@@ -129,6 +130,27 @@ public class ViewNotesActivity extends BaseActivity{
         bindService(serviceIntent, myServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CreateNoteReqCode)
+        {
+            if (resultCode == RESULT_OK)
+            {
+                if (data.getExtras() != null)
+                {
+                    NoteDataModel tempModel = (NoteDataModel) data.getSerializableExtra("noteDataModel");
+                    tempModel.setLocation(data.getParcelableExtra("location"));
+
+                    myNotesList.add(tempModel);
+
+                    myNotesListAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
 
     private void setupSwipeMenu(){
 
