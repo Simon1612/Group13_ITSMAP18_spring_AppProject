@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -175,11 +176,6 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 
         if(service != null) {
-            /*recentNotesList.clear();
-            recentNotesList.addAll(service.getLastNotes());
-
-            notesListAdapter.notifyDataSetChanged();
-            quicknoteEdit.getText().clear();*/
             Intent notesReadyIntent = new Intent();
             notesReadyIntent.setAction(notesReady);
 

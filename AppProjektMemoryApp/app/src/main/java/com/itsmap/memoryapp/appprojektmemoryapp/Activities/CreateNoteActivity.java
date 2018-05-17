@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -42,7 +43,7 @@ public class CreateNoteActivity extends AppCompatActivity
     final static int SET_MARKER_REQUEST = 234;
     final static int CAMERA_REQUEST = 167;
     LatLng location;
-    String currentLocationReady, imgBitmap;
+    String currentLocationReady;
 
     MemoryAppService.LocalBinder binder;
     Intent serviceIntent;
@@ -52,9 +53,10 @@ public class CreateNoteActivity extends AppCompatActivity
     EditText NoteDescriptionText, NameText;
     ImageView NotePictureImageView;
     NoteDataModel noteData;
-    Bitmap decodedImg;
 
     Boolean mBound = false;
+
+    static String encoded;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -69,13 +71,12 @@ public class CreateNoteActivity extends AppCompatActivity
         filter.addAction(currentLocationReady);
 
         this.registerReceiver(br, filter);
-
-        if(noteData == null){
-            if(location != null) {
-                noteData = new NoteDataModel("", "", location.latitude, location.longitude, "");
-            } else {
-                noteData = new NoteDataModel("", "", 0, 0, "");
-            }
+        noteData = new NoteDataModel("", "", 0, 0, "");
+        if(location != null) {
+           noteData.setLocation(location);
+        }
+        if(encoded != null) {
+            noteData.setImageBitmap(encoded);
         }
 
         TimeStampTextView = findViewById(R.id.TimeStampTextView);
@@ -90,14 +91,6 @@ public class CreateNoteActivity extends AppCompatActivity
         TakePictureBtn = findViewById(R.id.TakePictureBtn);
         ExpandMapBtn = findViewById(R.id.ExpandMapBtn);
 
-        imgBitmap = noteData.getImageBitmap();
-        if(imgBitmap != null) {
-            if(!imgBitmap.isEmpty()) {
-                byte[] decodedString = Base64.decode(imgBitmap.getBytes(), Base64.DEFAULT);
-                decodedImg = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                NotePictureImageView.setImageBitmap(decodedImg);
-            }
-        }
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,8 +188,6 @@ public class CreateNoteActivity extends AppCompatActivity
 
             memoryAppService.startService(serviceIntent);
 
-
-
         }
 
         @Override
@@ -220,7 +211,6 @@ public class CreateNoteActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        //save shared preferences
         unbindService(memoryAppServiceConnection);
         unregisterReceiver(br);
         mBound = false;
@@ -236,7 +226,8 @@ public class CreateNoteActivity extends AppCompatActivity
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
-            String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+            encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
             noteData.setImageBitmap(encoded);
         }
     }
@@ -247,6 +238,7 @@ public class CreateNoteActivity extends AppCompatActivity
         outState.putBinder("binder", binder);
         outState.putParcelable("Location", location);
         outState.putSerializable("noteDataModel", noteData);
+        outState.putString("imageEncoded", encoded);
     }
 
     @Override
@@ -256,5 +248,6 @@ public class CreateNoteActivity extends AppCompatActivity
         binder = (MemoryAppService.LocalBinder) savedInstanceState.getBinder("binder");
         noteData = (NoteDataModel) savedInstanceState.getSerializable("noteDataModel");
         noteData.setLocation((LatLng) savedInstanceState.getParcelable("Location"));
+        encoded = savedInstanceState.getString("imageEncoded");
     }
 }
